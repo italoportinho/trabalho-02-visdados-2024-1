@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
+        <link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' />        
+    </head>
+    <body>
+        <div id='map' style='width: 400px; height: 300px;'></div>
+            <script>
+            var map = new maplibregl.Map({
+            container: 'map',
+            style: '/datasets/crimes_2011.geojson', // stylesheet location
+            //center: [-74.5, 40], // starting position [lng, lat]
+            //zoom: 9 // starting zoom
+            });
+            </script>
+    </body>
+</html>
