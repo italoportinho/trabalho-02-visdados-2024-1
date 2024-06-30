@@ -16,11 +16,7 @@ let dataset = await FileAttachment("data/crimes_2011.geojson").json({typed: true
 console.log(dataset);
 var map = new maplibregl.Map({
     container: 'map',
-    style: {
-        sources: {},
-        layers: [],
-        version: 8
-    }, 
+    style: 'https://tiles.stadiamaps.com/styles/alidade_smooth.json',
     center: [-46.63078308105469,-23.629427267052435], // starting position [lng, lat]
     zoom: 8 // starting zoom
 });
