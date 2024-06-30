@@ -8,23 +8,28 @@ toc: false
 ## Testes com o mapa
 <script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
 <link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' /> 
-<div id='map' style='width: 400px; height: 300px;'></div>
+<div id='map' style='width: 800px; height: 600px;'></div>
 
 ```js
 
-let dataset = await FileAttachment("data/crimes_2011.geojson").json({typed: true});
-console.log(dataset);
+let layer_crimes_2011 = await FileAttachment("data/crimes_2011.geojson").json({typed: true});
+console.log(layer_crimes_2011);
 var map = new maplibregl.Map({
     container: 'map',
     style: 'https://tiles.stadiamaps.com/styles/alidade_smooth.json',
-    center: [-46.63078308105469,-23.629427267052435], // starting position [lng, lat]
-    zoom: 8 // starting zoom
+    /*style: {
+        sources: {},
+        layers: [],
+        version: 8
+    },*/ 
+    center: [-46.621856689453125,-23.704265788783246], // starting position [lng, lat]
+    zoom: 9 // starting zoom
 });
 
 map.on('load', () => {
         map.addSource('crimes_2011', {
             'type': 'geojson',
-            'data': dataset
+            'data': layer_crimes_2011
         });
         map.addLayer({
             'id': 'crimes_2011',
