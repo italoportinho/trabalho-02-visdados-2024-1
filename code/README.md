@@ -1,4 +1,4 @@
-# Owner avatar
+# Trabalho 2 de Visualização de Dados
 
 This is an [Observable Framework](https://observablehq.com/framework) project. To start the local preview server, run:
 
