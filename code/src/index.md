@@ -51,6 +51,6 @@ theme: [dashboard,glacier]
   <div style="text-align: justify;">
       <h2>Universidade Federal Fluminense - UFF</h2>
       <h2>Programa de Pós Graduação em Computação - PGC</h2>
-      <h2>Professor: Marcos Lage | Grupo: Italo Portinho, Lyncoln</h2>  
+      <h2>Professor: Marcos Lage | Grupo: Italo Portinho, Lyncoln Sousa</h2>  
   </div>  
 </div>
