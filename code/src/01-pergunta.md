@@ -85,10 +85,10 @@ let divWidth = 670;
 
 <hr>
 
-## Heatmap
+## HeatMatrix
 
 <div class="grid grid-cols-1">
-  <div class="card" id="chart_heatmap">   
+  <div class="card" id="chart_heatmatrix">   
 
       <!-- ${ vl.render(heatmap(heatmap_data)) } -->
   </div>  
@@ -109,14 +109,22 @@ let divWidth = 670;
   <div class="card" id="chart_dataset_bpm">     
 
 ```js
+const multiline_chart_2_data = await db_crimes_all_years.sql`
+  SELECT name, feminicide,homicide,felony_murder,bodily_harm,theft_cellphone,robbery_cellphone,theft_auto,armed_robbery_auto,criminal_index
+    FROM crimes_all_years
+    ORDER BY year ASC;
+`;
+/*
 const graph_line_data = await db_crimes_all_years.sql`
   SELECT year, sum(criminal_index) as criminal_index
     FROM crimes_all_years
     GROUP BY year
     ORDER BY year ASC;
 `;
+
 console.log(graph_line_data);
-const graph_line_BPM = line_chart(graph_line_data, "Índice Criminal por ano", "year", "Ano", "criminal_index", "Índice Criminal");
+*/
+const graph_line_BPM = line_chart(dataset_crimes_all_years, "Índice Criminal por ano", "year", "Ano", "criminal_index", "Índice Criminal");
 embed("#chart_dataset_bpm",graph_line_BPM.spec);
 ```   
     
@@ -130,10 +138,17 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
 <br>
 
 
-## Propriedades percentuais
+## Crime mais prevalente por ano
 <div class="grid grid-cols-1">
   <div class="card" id="multiline_chart">         
-      ${ vl.render(multiline_chart(dataset)) }
+      ${ vl.render(multiline_chart(dataset_crimes_all_years)) }
+  </div>
+</div>
+
+## Crime que mais influencia no índice criminal(média)
+<div class="grid grid-cols-1">
+  <div class="card" id="multiline_chart_2">         
+      ${ vl.render(multiline_chart_2(multiline_chart_2_data)) }
   </div>  
 </div>
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
@@ -212,6 +227,7 @@ embed("#vis_completo_chart2",graph_chart2.spec)
 // Carregamos o dataset.
 let dataset = await FileAttachment("data/spotify-2023.csv").csv({typed: true});
 let dataset_crimes_all_years = await FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true});
+
 const db_crimes_all_years = await DuckDBClient.of({crimes_all_years: FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true})});
 
 
@@ -339,6 +355,46 @@ DROP TABLE all_dates;
 
 
 `;
+
+const db_dataset_crimes_dia_2017 = await DuckDBClient.of({crimes_dia_2017: FileAttachment("data/crimes_dia_2017_no_nulls.csv").dsv({delimiter: ";", typed: true})});
+
+const heatmatrix_data = await db_dataset_crimes_dia_2017.sql`
+CREATE TEMP TABLE all_dates (
+    minha_date VARCHAR,
+    streams_total INT DEFAULT 0
+);
+
+INSERT INTO all_dates (minha_date)
+SELECT
+    CONCAT(m, '-', d) AS minha_date
+FROM
+    (SELECT * FROM (VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12)) AS m(m)),
+    (SELECT * FROM (VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23),(24),(25),(26),(27),(28),(29),(30),(31)) AS d(d));
+
+SELECT 
+    all_dates.minha_date, 
+    COALESCE(LOG10(SUM(CAST(s.streams_total AS INT64))), 0) AS log_streams_total,
+    COALESCE(SUM(CAST(s.streams_total AS INT64)), 0) AS streams_total
+FROM 
+    all_dates
+LEFT JOIN (
+    SELECT 
+        CONCAT(month::INTEGER, '-', day::INTEGER) AS minha_date,
+        criminal_index::BIGINT AS streams_total
+    FROM 
+        crimes_dia_2017 
+    
+) AS s ON all_dates.minha_date = s.minha_date
+GROUP BY 
+    all_dates.minha_date
+ORDER BY 
+    all_dates.minha_date;
+
+DROP TABLE all_dates;
+
+
+`;
+
 //display(heatmap_data);
 //view(Inputs.table(heatmap_data));
 
@@ -427,6 +483,7 @@ function line_chart(data_array, titulo, campo_x, title_x, campo_y, title_y){
           y: {
               field: campo_y,
               type: "quantitative",
+              aggregate: "mean",
               title: title_y
           },
           x: {
@@ -436,7 +493,7 @@ function line_chart(data_array, titulo, campo_x, title_x, campo_y, title_y){
               sort: "asc"
           },
           tooltip: [
-          {field: campo_y, type: "quantitative", title: title_y},
+          {field: campo_y, type: "quantitative", title: title_y, aggregate: "mean"},
           {field: campo_x, type: "quantitative", title: title_x, /*aggregate: "mean",*/ format:","}
           ],    
           
@@ -458,79 +515,193 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "streams", type: "quantitative" },
+            x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "danceability_%", type: "quantitative", title: "Média do valor da propriedade(%)"
+              aggregate: "mean", field: "feminicide", type: "quantitative", title: "Média do valor da propriedade"
             },
-            color: { datum: "danceability_%", "type": "nominal"},
+            color: { datum: "feminicide", "type": "nominal"},
           },
-          name: "child_layer_danceability_%"
+          name: "child_layer_feminicide"
         },
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "streams", type: "quantitative" },
+            x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "valence_%", type: "quantitative", title: "Média do valor da propriedade(%)"
+              aggregate: "mean", field: "homicide", type: "quantitative", title: "Média do valor da propriedade"
             },
-            color: { datum: "valence_%", "type": "nominal"},
+            color: { datum: "homicide", "type": "nominal"},
           },
-          name: "child_layer_valence_%"
+          name: "child_layer_homicide"
         },
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "streams", type: "quantitative" },
+            x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "energy_%", type: "quantitative", title: "Média do valor da propriedade(%)"
+              aggregate: "mean", field: "felony_murder", type: "quantitative", title: "Média do valor da propriedade"
             },
-            color: { datum: "energy_%", "type": "nominal"},
+            color: { datum: "felony_murder", "type": "nominal"},
           },
-          name: "child_layer_energy_%"
+          name: "child_layer_felony_murder"
         },
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "streams", type: "quantitative" },
+            x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "acousticness_%", type: "quantitative", title: "Média do valor da propriedade(%)"
+              aggregate: "mean", field: "bodily_harm", type: "quantitative", title: "Média do valor da propriedade"
             },
-            color: { datum: "acousticness_%", "type": "nominal"},
+            color: { datum: "bodily_harm", "type": "nominal"},
           },
-          name: "child_layer_acousticness_%"
+          name: "child_layer_bodily_harm"
         },
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "streams", type: "quantitative" },
+            x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "instrumentalness_%", type: "quantitative", title: "Média do valor da propriedade(%)"
+              aggregate: "mean", field: "theft_cellphone", type: "quantitative", title: "Média do valor da propriedade"
             },
-            color: { datum: "instrumentalness_%", "type": "nominal"},
+            color: { datum: "theft_cellphone", "type": "nominal"},
           },
-          name: "child_layer_instrumentalness_%"
+          name: "child_layer_theft_cellphone"
         },
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "streams", type: "quantitative" },
+            x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "liveness_%", type: "quantitative", title: "Média do valor da propriedade(%)"
+              aggregate: "mean", field: "robbery_cellphone", type: "quantitative", title: "Média do valor da propriedade"
             },
-            color: { datum: "liveness_%", "type": "nominal"},
+            color: { datum: "robbery_cellphone", "type": "nominal"},
           },
-          name: "child_layer_liveness_%"
+          name: "child_layer_robbery_cellphone"
         },
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "streams", type: "quantitative" },
+            x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "speechiness_%", type: "quantitative", title: "Média do valor da propriedade(%)"
+              aggregate: "mean", field: "theft_auto", type: "quantitative", title: "Média do valor da propriedade"
             },
-            color: { datum: "speechiness_%", "type": "nominal"},
+            color: { datum: "theft_auto", "type": "nominal"},
           },
-          name: "child_layer_speechiness_%"
+          name: "child_layer_theft_auto"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "year", type: "quantitative" },
+            y: {
+              aggregate: "mean", field: "armed_robbery_auto", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "armed_robbery_auto", "type": "nominal"},
+          },
+          name: "child_layer_armed_robbery_auto"
+        },
+      ]    
+    }
+  }
+}
+
+function multiline_chart_2(data_array){
+  return {
+    spec: {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      width: "600",
+      height: "400",
+      data: {
+        values: data_array
+      },
+      layer: [
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "feminicide", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "feminicide", "type": "nominal"},
+          },
+          name: "child_layer_feminicide"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "homicide", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "homicide", "type": "nominal"},
+          },
+          name: "child_layer_homicide"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "felony_murder", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "felony_murder", "type": "nominal"},
+          },
+          name: "child_layer_felony_murder"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "bodily_harm", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "bodily_harm", "type": "nominal"},
+          },
+          name: "child_layer_bodily_harm"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "theft_cellphone", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "theft_cellphone", "type": "nominal"},
+          },
+          name: "child_layer_theft_cellphone"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "robbery_cellphone", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "robbery_cellphone", "type": "nominal"},
+          },
+          name: "child_layer_robbery_cellphone"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "theft_auto", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "theft_auto", "type": "nominal"},
+          },
+          name: "child_layer_theft_auto"
+        },
+        {
+          mark: "line",
+          encoding: {
+            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            y: {
+              aggregate: "mean", field: "armed_robbery_auto", type: "quantitative", title: "Média do valor da propriedade"
+            },
+            color: { datum: "armed_robbery_auto", "type": "nominal"},
+          },
+          name: "child_layer_armed_robbery_auto"
         },
       ]    
     }
@@ -539,6 +710,7 @@ function multiline_chart(data_array){
 
 
 console.log(heatmap_data.batches[0].data.children[0]);
+console.log(heatmatrix_data.batches[0].data.children[0]);
 
 
 const graph_heatmap = {
@@ -598,8 +770,65 @@ const graph_heatmap = {
     }
 }
 
+const graph_heatmatrix = {
+    width: "container",
+    height: "268",
+    "data": { values: heatmatrix_data},
+    "title": "Índice de criminalidade em cada dia de 2017",
+    "config": {
+        "view": {
+            "strokeWidth": 0,
+            "step": 13
+        },
+        "axis": {
+            "domain": false
+        }
+    },
+    "mark": "rect",
+    "encoding": {
+        "x": {
+            "field": "minha_date",
+            "timeUnit": "date",
+            "type": "ordinal",
+            "title": "Dia",
+            "axis": {
+                "labelAngle": 0,
+                "format": "%e"
+            }
+        },
+        "y": {
+            "field": "minha_date",
+            "timeUnit": "month",
+            "type": "ordinal",
+            "title": "Mês"
+        },
+        "color": {
+            "field": "streams_total",
+            "type": "quantitative",
+            "legend": {
+                "title": "Índice de criminalidade",
+                "format": ",.0s"
+            }
+        },
+        "tooltip": [
+            {
+                "field": "streams_total", 
+                "type": "quantitative", 
+                "title": "Total do índice de criminalidade",
+                "format":","
+            },
+            {
+                "field": "log_streams_total", 
+                "type": "quantitative", 
+                "title": "Log total do índice de criminalidade",
+                "format":",.3s"
+            },
+        ]
+    }
+}
 
- embed("#chart_heatmap", graph_heatmap)
+// embed("#chart_heatmap", graph_heatmap)
+embed("#chart_heatmatrix", graph_heatmatrix)
 
 function popula_months_array(months_array, dataset){
   // Iteramos no dataset para extrair os lançamentos por mês e popular o array.
