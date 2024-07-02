@@ -23,83 +23,7 @@ let divWidth = 670;
 </div>
 <br>
 
-## Total de músicas lançadas por mês:
 
-<div class="grid grid-cols-2">
-  <div class="card" id="vis_completo_completo">  
-      <span style="font-size: 80%;"></span>  
-
-  ```js
-  const graph_bar_completo =  bar_chart(months_array_completo, "Dataset Completo");
-  embed("#vis_completo_completo",graph_bar_completo.spec)
-  ```
-
-  </div>  
-</div>
-<div class="grid grid-cols-2">  
-  <div class="card" id="vis_completo_25">  
-      <span style="font-size: 80%;"></span>  
-
-  ```js
-  const graph_bar_25 =  bar_chart(months_array_25, "Dataset 25%");
-  embed("#vis_completo_25",graph_bar_25.spec)
-  ```
-
-  </div>  
-  <div class="card" id="vis_completo_25_50">  
-      <span style="font-size: 80%;"></span> 
-
-  ```js
-  const graph_bar_25_50 =  bar_chart(months_array_50, "Dataset 25% - 50%");
-  embed("#vis_completo_25_50",graph_bar_25_50.spec)
-  ```
-
-  </div>  
-  <div class="card" id="vis_completo_50_75">  
-      <span style="font-size: 80%;"></span>  
-
-  ```js
-  const graph_bar_50_75 =  bar_chart(months_array_75, "Dataset 50% - 75%");
-  embed("#vis_completo_50_75",graph_bar_50_75.spec)
-  ```
-
-  </div>  
-  <div class="card" id="vis_completo_75_100">  
-      <span style="font-size: 80%;"></span>  
-
-  ```js
-  const graph_bar_75_100 =  bar_chart(months_array_100, "Dataset 75% - 100%");
-  embed("#vis_completo_75_100",graph_bar_75_100.spec)
-  ```
-
-  </div>  
-</div>
-
-<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
-    <p style="text-align: justify;">   
-    Este conjunto de visualizações apresenta o número de lançamentos por mês. O dataset foi ordenado por streams em ordem crescente e dividido em intervalos de quartis. Utilizou-se um gráfico de barras, pois cada mês atua como um "pote" onde os lançamentos são agrupados, permitindo uma comparação visual direta e quantitativa entre os diferentes intervalos. Primeiramente, o gráfico com o dataset completo é apresentado, revelando que os meses de janeiro e maio possuem os maiores números de lançamentos, sendo os únicos com mais de 100. Em seguida, quatro visualizações são mostradas, uma para cada quartil do dataset, dividido com base nos valores de streams.
-    No primeiro gráfico, que representa o primeiro quartil, o mês de maio se destaca. No segundo e terceiro gráfico, o padrão se mantém, com maio continuando a ter destaque. No quarto gráfico, que representa o quartil com os maiores valores de streams, observa-se uma mudança, o mês de janeiro se destaca significativamente. Este último intervalo é o mais relevante para nosso estudo, pois contém as BPMs com os maiores números de visualizações.
-    </p>
-</div>
-<br>
-
-<hr>
-
-## HeatMatrix
-
-<div class="grid grid-cols-1">
-  <div class="card" id="chart_heatmatrix">   
-
-      <!-- ${ vl.render(heatmap(heatmap_data)) } -->
-  </div>  
-</div>
-
-<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
-    <p style="text-align: justify;">   
-    Nesta visualização, apresentamos um mapa de calor em formato de matriz, com os meses no eixo y e os dias do mês no eixo x. As cores mapeiam o valor de streams em escala logarítmica para cada data, uma escolha feita devido ao grande intervalo de variação no número de streams. Para visualizar o número exato de streams em cada data, o recurso de tooltip pode ser utilizado ao passar o mouse sobre os quadrantes. Quanto mais lançamentos ocorrerem em um determinado dia do mês, mais escura será a cor do quadrante correspondente. Os dias 6 de maio e 1º de janeiro se destacam com as cores mais escuras, corroborando os achados das visualizações de gráfico de barras que já apontavam esses meses como os com maior número de lançamentos de BPMs.
-    </p>
-</div>
-<br>
 
 <hr>
 
@@ -138,7 +62,7 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
 <br>
 
 
-## Crime mais prevalente por ano
+## Crime mais prevalente por ano(média)
 <div class="grid grid-cols-1">
   <div class="card" id="multiline_chart">         
       ${ vl.render(multiline_chart(dataset_crimes_all_years)) }
@@ -196,29 +120,7 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
 </div>
 <br>
 
-
-## Propriedades musicais
-<div class="grid grid-cols-1">
-  <div class="card" id="vis_completo_chart2">  
-      <span style="font-size: 80%;"></span>  
-
 ```js
-const graph_chart2 = bar_chart2(musical_data, "Streams por tom musical", "streams", "Streams", "tom_da_musica", "Tom musical")
-embed("#vis_completo_chart2",graph_chart2.spec)
-```
-
-  </div>    
-</div>
-<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
-    <p style="text-align: justify;">   
-        Para essa visualização, os atributos key e mode foram concatenados para formar o tom da música e totalizamos o número de streams para cada tom e apresentamos em ordem crescente em um gráfico de barra, para comparação direta. O tom C# Maior (Dó SUstenido Maior) é de longe o mais comum, seguido por Ré Maior, Sol sustenido Maior e Sol Maior. A primeira tonalidade menor surge apenas na quinta posição. Podemos notar também que da primeira para a segunda posição a tonalidade varia apenas um semitom, bem como da terceira para a quarta posição, ou seja bem pouco.
-    </p>
-</div>
-
-
-```js
-
-
 
 /*
 *
@@ -234,127 +136,6 @@ const db_crimes_all_years = await DuckDBClient.of({crimes_all_years: FileAttachm
 //console.log(dataset_crimes_all_years);
 // Ordenamos o dataset por streams, de forma CRESCENTE.
 dataset = dataset.sort((a, b) => (a.streams > b.streams ? 1 : -1));
-
-// É criado um array de objetos com a estrutura para totalizar os lançamentos por mês
-let months_array_25 = [
-  { mes: "Janeiro", lancamentos: 0} ,
-  { mes: "Fevereiro", lancamentos: 0} ,
-  { mes: "Março", lancamentos: 0} ,
-  { mes: "Abril", lancamentos: 0} ,
-  { mes: "Maio", lancamentos: 0} ,
-  { mes: "Junho", lancamentos: 0} ,
-  { mes: "Julho", lancamentos: 0} ,
-  { mes: "Agosto", lancamentos: 0} ,
-  { mes: "Setembro", lancamentos: 0} ,
-  { mes: "Outubro", lancamentos: 0} ,
-  { mes: "Novembro", lancamentos: 0} ,
-  { mes: "Dezembro", lancamentos: 0} 
-];
-let months_array_50 = [
-  { mes: "Janeiro", lancamentos: 0} ,
-  { mes: "Fevereiro", lancamentos: 0} ,
-  { mes: "Março", lancamentos: 0} ,
-  { mes: "Abril", lancamentos: 0} ,
-  { mes: "Maio", lancamentos: 0} ,
-  { mes: "Junho", lancamentos: 0} ,
-  { mes: "Julho", lancamentos: 0} ,
-  { mes: "Agosto", lancamentos: 0} ,
-  { mes: "Setembro", lancamentos: 0} ,
-  { mes: "Outubro", lancamentos: 0} ,
-  { mes: "Novembro", lancamentos: 0} ,
-  { mes: "Dezembro", lancamentos: 0} 
-];
-
-let months_array_75 = [
-  { mes: "Janeiro", lancamentos: 0} ,
-  { mes: "Fevereiro", lancamentos: 0} ,
-  { mes: "Março", lancamentos: 0} ,
-  { mes: "Abril", lancamentos: 0} ,
-  { mes: "Maio", lancamentos: 0} ,
-  { mes: "Junho", lancamentos: 0} ,
-  { mes: "Julho", lancamentos: 0} ,
-  { mes: "Agosto", lancamentos: 0} ,
-  { mes: "Setembro", lancamentos: 0} ,
-  { mes: "Outubro", lancamentos: 0} ,
-  { mes: "Novembro", lancamentos: 0} ,
-  { mes: "Dezembro", lancamentos: 0} 
-];
-
-let months_array_100 = [
-  { mes: "Janeiro", lancamentos: 0} ,
-  { mes: "Fevereiro", lancamentos: 0} ,
-  { mes: "Março", lancamentos: 0} ,
-  { mes: "Abril", lancamentos: 0} ,
-  { mes: "Maio", lancamentos: 0} ,
-  { mes: "Junho", lancamentos: 0} ,
-  { mes: "Julho", lancamentos: 0} ,
-  { mes: "Agosto", lancamentos: 0} ,
-  { mes: "Setembro", lancamentos: 0} ,
-  { mes: "Outubro", lancamentos: 0} ,
-  { mes: "Novembro", lancamentos: 0} ,
-  { mes: "Dezembro", lancamentos: 0} 
-];
-
-let months_array_completo = [
-  { mes: "Janeiro", lancamentos: 0} ,
-  { mes: "Fevereiro", lancamentos: 0} ,
-  { mes: "Março", lancamentos: 0} ,
-  { mes: "Abril", lancamentos: 0} ,
-  { mes: "Maio", lancamentos: 0} ,
-  { mes: "Junho", lancamentos: 0} ,
-  { mes: "Julho", lancamentos: 0} ,
-  { mes: "Agosto", lancamentos: 0} ,
-  { mes: "Setembro", lancamentos: 0} ,
-  { mes: "Outubro", lancamentos: 0} ,
-  { mes: "Novembro", lancamentos: 0} ,
-  { mes: "Dezembro", lancamentos: 0} 
-];
-
-months_array_25 = popula_months_array(months_array_25, dataset.slice(0, 237));
-months_array_50 = popula_months_array(months_array_50, dataset.slice(238, 475));
-months_array_75 = popula_months_array(months_array_75, dataset.slice(476, 715));
-months_array_100 = popula_months_array(months_array_100, dataset.slice(716, 952));
-months_array_completo = popula_months_array(months_array_completo, dataset);
-
-const db = await DuckDBClient.of({spotify: FileAttachment("data/spotify-2023.csv").csv({typed: true})});
-
-const heatmap_data = await db.sql`
-CREATE TEMP TABLE all_dates (
-    minha_date VARCHAR,
-    streams_total INT DEFAULT 0
-);
-
-INSERT INTO all_dates (minha_date)
-SELECT
-    CONCAT(m, '-', d) AS minha_date
-FROM
-    (SELECT * FROM (VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12)) AS m(m)),
-    (SELECT * FROM (VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20),(21),(22),(23),(24),(25),(26),(27),(28),(29),(30),(31)) AS d(d));
-
-SELECT 
-    all_dates.minha_date, 
-    COALESCE(LOG10(SUM(CAST(s.streams_total AS INT64))), 0) AS log_streams_total,
-    COALESCE(SUM(CAST(s.streams_total AS INT64)), 0) AS streams_total
-FROM 
-    all_dates
-LEFT JOIN (
-    SELECT 
-        CONCAT(released_month::INTEGER, '-', released_day::INTEGER) AS minha_date,
-        streams::BIGINT AS streams_total
-    FROM 
-        spotify 
-    WHERE 
-        streams IS NOT NULL 
-) AS s ON all_dates.minha_date = s.minha_date
-GROUP BY 
-    all_dates.minha_date
-ORDER BY 
-    all_dates.minha_date;
-
-DROP TABLE all_dates;
-
-
-`;
 
 const db_dataset_crimes_dia_2017 = await DuckDBClient.of({crimes_dia_2017: FileAttachment("data/crimes_dia_2017_no_nulls.csv").dsv({delimiter: ";", typed: true})});
 
@@ -395,15 +176,6 @@ DROP TABLE all_dates;
 
 `;
 
-//display(heatmap_data);
-//view(Inputs.table(heatmap_data));
-
-const musical_data = await db.sql`
-  SELECT 
-    concat(key, ' ', mode ) as tom_da_musica, 
-    sum(streams)::LONG as streams
-  FROM spotify WHERE streams is NOT NULL AND key is not null GROUP BY tom_da_musica ORDER BY streams DESC`;
-//view(Inputs.table(musical_data));
 
 /*
 *
@@ -421,17 +193,17 @@ function bar_chart(data_array, titulo, campo_x, titulo_x, campo_y, titulo_y){
             title: titulo,
             encoding: {
                 y: {
-                    field: "lancamentos",
+                    field: "valor",
                     type: "quantitative",
-                    title: "Músicas lançadas no mês"
+                    title: "Total"
                 },
                 x: {
-                    field: "mes",
-                    title: "Mês de Lançamento",
+                    field: "crime",
+                    title: "Crime",
                     sort: null
                 },
                 tooltip: [
-                  {field: "lancamentos", type: "quantitative", title: "Lançamentos"}
+                  {field: "valor", type: "quantitative", title: "Total"}
                 ],                
             }
         }
@@ -517,7 +289,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "feminicide", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "feminicide", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "feminicide", "type": "nominal"},
           },
@@ -528,7 +300,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "homicide", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "homicide", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "homicide", "type": "nominal"},
           },
@@ -539,7 +311,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "felony_murder", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "felony_murder", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "felony_murder", "type": "nominal"},
           },
@@ -550,7 +322,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "bodily_harm", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "bodily_harm", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "bodily_harm", "type": "nominal"},
           },
@@ -561,7 +333,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "theft_cellphone", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "theft_cellphone", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "theft_cellphone", "type": "nominal"},
           },
@@ -572,7 +344,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "robbery_cellphone", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "robbery_cellphone", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "robbery_cellphone", "type": "nominal"},
           },
@@ -583,7 +355,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "theft_auto", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "theft_auto", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "theft_auto", "type": "nominal"},
           },
@@ -594,7 +366,7 @@ function multiline_chart(data_array){
           encoding: {
             x: { bin: true, field: "year", type: "quantitative" },
             y: {
-              aggregate: "mean", field: "armed_robbery_auto", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "armed_robbery_auto", type: "quantitative", title: "Média do valor da propriedade"
             },
             color: { datum: "armed_robbery_auto", "type": "nominal"},
           },
@@ -708,67 +480,7 @@ function multiline_chart_2(data_array){
   }
 }
 
-
-console.log(heatmap_data.batches[0].data.children[0]);
 console.log(heatmatrix_data.batches[0].data.children[0]);
-
-
-const graph_heatmap = {
-    width: "container",
-    height: "268",
-    "data": { values: heatmap_data},
-    "title": "Soma de streams por dia de lançamento",
-    "config": {
-        "view": {
-            "strokeWidth": 0,
-            "step": 13
-        },
-        "axis": {
-            "domain": false
-        }
-    },
-    "mark": "rect",
-    "encoding": {
-        "x": {
-            "field": "minha_date",
-            "timeUnit": "date",
-            "type": "ordinal",
-            "title": "Dia",
-            "axis": {
-                "labelAngle": 0,
-                "format": "%e"
-            }
-        },
-        "y": {
-            "field": "minha_date",
-            "timeUnit": "month",
-            "type": "ordinal",
-            "title": "Mês"
-        },
-        "color": {
-            "field": "log_streams_total",
-            "type": "quantitative",
-            "legend": {
-                "title": "Número de streams em log",
-                "format": ",.0s"
-            }
-        },
-        "tooltip": [
-            {
-                "field": "streams_total", 
-                "type": "quantitative", 
-                "title": "Total do número de streams",
-                "format":","
-            },
-            {
-                "field": "log_streams_total", 
-                "type": "quantitative", 
-                "title": "Log total do número de streams",
-                "format":",.3s"
-            },
-        ]
-    }
-}
 
 const graph_heatmatrix = {
     width: "container",
@@ -812,6 +524,24 @@ const graph_heatmatrix = {
         },
         "tooltip": [
             {
+                "field": "minha_date", 
+                "timeUnit": "date",
+                "type": "ordinal", 
+                "title": "Dia",
+            },  
+            {
+                "field": "minha_date", 
+                "timeUnit": "month",
+                "type": "ordinal", 
+                "title": "Mês",
+            },
+            {
+                "field": "minha_date", 
+                "timeUnit": "day",
+                "type": "ordinal", 
+                "title": "dia da semana",
+            },          
+            {
                 "field": "streams_total", 
                 "type": "quantitative", 
                 "title": "Total do índice de criminalidade",
@@ -827,7 +557,6 @@ const graph_heatmatrix = {
     }
 }
 
-// embed("#chart_heatmap", graph_heatmap)
 embed("#chart_heatmatrix", graph_heatmatrix)
 
 function popula_months_array(months_array, dataset){
@@ -878,4 +607,151 @@ function popula_months_array(months_array, dataset){
   return months_array;
 }
 ```
+## Total dos tipos de crime por ano (colocar interação para escolher o ano):
 
+
+<div class="grid grid-cols-2">  
+  <div class="card" id="bar_crimes_2014">  
+      <span style="font-size: 80%;"></span> 
+
+  ```js
+  const data_bar_chart_2014 = await db_crimes_all_years.sql`
+  SELECT 
+    'feminicide' as crime,
+    sum(feminicide) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+  UNION
+  SELECT 
+    'homicide' as crime,
+    sum(homicide) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+  UNION
+  SELECT 
+    'felony_murder' as crime,
+    sum(felony_murder) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+  UNION
+  SELECT 
+    'bodily_harm' as crime,
+    sum(bodily_harm) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+  UNION
+  SELECT 
+    'theft_cellphone' as crime,
+    sum(theft_cellphone) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+  UNION
+  SELECT 
+    'robbery_cellphone' as crime,
+    sum(robbery_cellphone) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+  UNION
+  SELECT 
+    'theft_auto' as crime,
+    sum(theft_auto) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+  UNION
+  SELECT 
+    'armed_robbery_auto' as crime,
+    sum(armed_robbery_auto) as valor        
+    FROM crimes_all_years
+    WHERE year = 2014
+
+`;
+  const graph_bar_2014 =  bar_chart(data_bar_chart_2014, "2014");
+  embed("#bar_crimes_2014",graph_bar_2014.spec)
+  ```
+  
+  </div>  
+
+  <div class="card" id="bar_crimes_2017">  
+      <span style="font-size: 80%;"></span> 
+
+  ```js
+  const data_bar_chart_2017 = await db_crimes_all_years.sql`
+  SELECT 
+    'feminicide' as crime,
+    sum(feminicide) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+  UNION
+  SELECT 
+    'homicide' as crime,
+    sum(homicide) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+  UNION
+  SELECT 
+    'felony_murder' as crime,
+    sum(felony_murder) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+  UNION
+  SELECT 
+    'bodily_harm' as crime,
+    sum(bodily_harm) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+  UNION
+  SELECT 
+    'theft_cellphone' as crime,
+    sum(theft_cellphone) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+  UNION
+  SELECT 
+    'robbery_cellphone' as crime,
+    sum(robbery_cellphone) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+  UNION
+  SELECT 
+    'theft_auto' as crime,
+    sum(theft_auto) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+  UNION
+  SELECT 
+    'armed_robbery_auto' as crime,
+    sum(armed_robbery_auto) as valor        
+    FROM crimes_all_years
+    WHERE year = 2017
+
+`;
+  const graph_bar_2017 =  bar_chart(data_bar_chart_2017, "2017");
+  embed("#bar_crimes_2017",graph_bar_2017.spec)
+  ```
+  
+  </div> 
+</div>
+
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">   
+    Este conjunto de visualizações apresenta o número de lançamentos por mês. O dataset foi ordenado por streams em ordem crescente e dividido em intervalos de quartis. Utilizou-se um gráfico de barras, pois cada mês atua como um "pote" onde os lançamentos são agrupados, permitindo uma comparação visual direta e quantitativa entre os diferentes intervalos. Primeiramente, o gráfico com o dataset completo é apresentado, revelando que os meses de janeiro e maio possuem os maiores números de lançamentos, sendo os únicos com mais de 100. Em seguida, quatro visualizações são mostradas, uma para cada quartil do dataset, dividido com base nos valores de streams.
+    No primeiro gráfico, que representa o primeiro quartil, o mês de maio se destaca. No segundo e terceiro gráfico, o padrão se mantém, com maio continuando a ter destaque. No quarto gráfico, que representa o quartil com os maiores valores de streams, observa-se uma mudança, o mês de janeiro se destaca significativamente. Este último intervalo é o mais relevante para nosso estudo, pois contém as BPMs com os maiores números de visualizações.
+    </p>
+</div>
+<br>
+
+<hr>
+
+## HeatMatrix
+
+<div class="grid grid-cols-1">
+  <div class="card" id="chart_heatmatrix">   
+  </div>  
+</div>
+
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">   
+    Nesta visualização, apresentamos um mapa de calor em formato de matriz, com os meses no eixo y e os dias do mês no eixo x. As cores mapeiam o valor de streams em escala logarítmica para cada data, uma escolha feita devido ao grande intervalo de variação no número de streams. Para visualizar o número exato de streams em cada data, o recurso de tooltip pode ser utilizado ao passar o mouse sobre os quadrantes. Quanto mais lançamentos ocorrerem em um determinado dia do mês, mais escura será a cor do quadrante correspondente. Os dias 6 de maio e 1º de janeiro se destacam com as cores mais escuras, corroborando os achados das visualizações de gráfico de barras que já apontavam esses meses como os com maior número de lançamentos de BPMs.
+    </p>
+</div>
+<br>
