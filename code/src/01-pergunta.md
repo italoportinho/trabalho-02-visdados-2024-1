@@ -200,8 +200,9 @@ function bar_chart(data_array, titulo, campo_x, titulo_x, campo_y, titulo_y){
                 x: {
                     field: "crime",
                     title: "Crime",
-                    sort: null
+                    sort: null,                    
                 },
+                color: {field: "crime"},
                 tooltip: [
                   {field: "valor", type: "quantitative", title: "Total"}
                 ],                
