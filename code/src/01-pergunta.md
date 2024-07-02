@@ -5,7 +5,7 @@ toc: false
 ---
 <style> body, div, p, li, ol, h1 { max-width: none; } </style>
 
-<h1> 1) Existe alguma característica que faz uma música ter mais chance de se tornar popular?</h1>
+<h1> 1) Mostrar a evolução dos crimes ao longos dos anos de 2011 a 2018 em um gráfico de linhas. Todos os crimes juntos. Algum crime se destaca? Mostrar índice criminal ao longo dos anos num gráfico de barras. Qual o ano com o maior índice? A partir do ano com maior índice criminal, mostrar HeatMatrix com os meses (eixo y) e os dias do ano(eixo x) com o índice criminal por dia. [Será precisa extrair um dataset do Apache Hive para o ano mais criminoso com essas informações] </h1>
 <hr>
 
 ```js

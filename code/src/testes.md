@@ -42,6 +42,10 @@ map.on('load', () => {
         'type': 'fill',
         'source': 'source_crimes_2011',
         'layout': {},
+        /*'paint': {
+                'fill-color': '#088',
+                'fill-opacity': 1
+            } */
         'paint': {
                     'fill-color': [
                         'interpolate',
@@ -66,7 +70,7 @@ map.on('load', () => {
                         10000,
                         '#723122'
                     ],
-                    'fill-opacity': 0.8
+                    'fill-opacity': 1
         }
     });
     

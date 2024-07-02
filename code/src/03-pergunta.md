@@ -28,7 +28,7 @@ title: Pergunta 3
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
-<h1> 3) Discuta as diferenças entre as plataformas Spotify, Deezer, Apple Music e Shazam</h1>
+<h1> 3)  Dado o ano com maior criminalidade, mostrar no mapa a distribuição de todos os tipos de crimes do dataset num mapa choroplético. Desejável: interação para escolher o ano(e a propriedade tb??), porém começar o mapa com o ano de maior índice criminal. Desejável: hover do mouse em cima do distrito, mostrar a tooltip com o valor da propriedade escolhida e o ano.</h1>
 <hr>
 
 

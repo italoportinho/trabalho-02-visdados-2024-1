@@ -8,7 +8,7 @@ theme: [glacier]
 const divWidth = Generators.width(document.querySelector(".grid"));
 ```
 
-<h1> 2) O conjunto das top 10 músicas e dos top 10 artistas varia muito se considerarmos apenas musicas lançadas no mesmo ano?</h1>
+<h1> 2) Qual é o crime mais prevalente em cada distrito?</h1>
 <hr>
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
