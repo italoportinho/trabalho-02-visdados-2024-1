@@ -72,5 +72,5 @@ where time_frag.id = crime.time_id
 where distrito.id = geometria.id
 ;
 
--- Step 3: Export table rows to csv file:
+-- Step 3: Export table rows to csv file (escolher nome diferente da tabela pra não dar erro):
 -- hadoop fs -cat hdfs://namenode:8020/user/hive/warehouse/trabalho_bdd_nofrag.db/districts_crimes_2011_geom/* > districts_crimes_2011_geom.csv
