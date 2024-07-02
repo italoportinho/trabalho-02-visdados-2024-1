@@ -103,13 +103,20 @@ let divWidth = 670;
 
 <hr>
 
-## BPM das BPMs:
+## Evolução do índice criminal:
 
 <div class="grid grid-cols-1">
   <div class="card" id="chart_dataset_bpm">     
 
 ```js
-const graph_line_BPM = line_chart(dataset, "BPM Top 50 músicas", "streams", "Média de streams", "bpm", "BPM da música");
+const graph_line_data = await db_crimes_all_years.sql`
+  SELECT year, sum(criminal_index) as criminal_index
+    FROM crimes_all_years
+    GROUP BY year
+    ORDER BY year ASC;
+`;
+console.log(graph_line_data);
+const graph_line_BPM = line_chart(graph_line_data, "Índice Criminal por ano", "year", "Ano", "criminal_index", "Índice Criminal");
 embed("#chart_dataset_bpm",graph_line_BPM.spec);
 ```   
     
@@ -204,6 +211,11 @@ embed("#vis_completo_chart2",graph_chart2.spec)
 
 // Carregamos o dataset.
 let dataset = await FileAttachment("data/spotify-2023.csv").csv({typed: true});
+let dataset_crimes_all_years = await FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true});
+const db_crimes_all_years = await DuckDBClient.of({crimes_all_years: FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true})});
+
+
+//console.log(dataset_crimes_all_years);
 // Ordenamos o dataset por streams, de forma CRESCENTE.
 dataset = dataset.sort((a, b) => (a.streams > b.streams ? 1 : -1));
 
@@ -420,12 +432,12 @@ function line_chart(data_array, titulo, campo_x, title_x, campo_y, title_y){
           x: {
               field: campo_x,
               title: title_x,
-              aggregate: "mean",
+              //aggregate: "mean",
               sort: "asc"
           },
           tooltip: [
           {field: campo_y, type: "quantitative", title: title_y},
-          {field: campo_x, type: "quantitative", title: title_x, aggregate: "mean", format:","}
+          {field: campo_x, type: "quantitative", title: title_x, /*aggregate: "mean",*/ format:","}
           ],    
           
       }
