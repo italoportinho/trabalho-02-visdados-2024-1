@@ -10,14 +10,14 @@ toc: false
         gap: 20px; 
         margin-bottom:-200px;
     }
-    #map, #vis {
-        width: 70%;
+    #map {
+        width: 60%;
         height: 600px;
         /* border-radius: 15px; 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     }
     #vis {
-        width: 30%;
+        width: 40%;
         height: 600px;
         /* border-radius: 15px; 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
@@ -31,6 +31,7 @@ toc: false
       padding: 10px;
       border-radius: 4px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      font-size:12px;
       font-family: Arial, sans-serif;
     }
     .legend-item {
