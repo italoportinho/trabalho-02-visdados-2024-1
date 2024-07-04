@@ -1,18 +1,19 @@
 ---
 theme: [dashboard,glacier]
-title: Testes com mapa
+title: Pergunta 3
 toc: false
 ---
 <style> body, div, p, li, ol, h1 { max-width: none; } 
-    #container{
+    #container {
         display: flex;
         flex-direction: row;
         gap: 20px; 
-        margin-bottom:-200px;
+        margin-bottom: -200px;
+        align-items: stretch;
     }
     #map {
         width: 60%;
-        height: 600px;
+        height: 568px;
         /* border-radius: 15px; 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     }
@@ -56,7 +57,7 @@ toc: false
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
-<h1> Como é a distribuição de crimes por tipo, região e ano na .... de São Paulo?</h1>
+<h1> Como é a distribuição de crimes por tipo, região e ano na capital de São Paulo?</h1>
 <hr>
 
 ```js
@@ -149,7 +150,7 @@ function createGraphBar(data, title) {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "description": "A bar chart showing various crime types and their values.",
     "width": "container",
-    "height": 600 - 64 - 83,
+    "height": "container",
     "title": title,
     "data": { "values": data },
     "mark": {
@@ -157,8 +158,8 @@ function createGraphBar(data, title) {
       "tooltip": true
     },
     "encoding": {
-      "x": { "field": "crime", "type": "nominal", "axis": { "labelAngle": 270 } },
-      "y": { "field": "value", "type": "quantitative" }
+      "x": { "field": "crime", "type": "nominal", "axis": { "labelAngle": 270 }, "title": "Tipo de Crime" },
+      "y": { "field": "value", "type": "quantitative", "title":"Quantidade" }
     },
     "layer": [
       {
@@ -377,9 +378,9 @@ map.on('mousemove', 'layer_crimes', function (e) {
 
 ```
 
-<div id="container">
-    <div id='map'></div>
-    <div id='vis'></div>
+<div id="container" class ="grid grid-cols-2">
+    <div id='map' class ="card"></div>
+    <div id='vis' class = "card"></div>
 </div>
 <div id="legend"></div>
 
