@@ -10,7 +10,7 @@ toc: false
         gap: 20px; 
     }
     #map, #vis {
-        width: 100%;
+        width: 50%;
         height: 600px;
         /* border-radius: 15px; 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
@@ -52,8 +52,8 @@ toc: false
 ```js
 
 const year = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano"}));
-const crimeTypeOptions = ["armed_robbery_auto", "bodily_harm", "crime_total","criminal_index", "felony_murder","feminicide","homicide","robbery_cellphone","theft_auto","theft_cellphone"];
-const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "crime_total", label: "Tipo de crime: "}));
+const crimeTypeOptions = ["armed_robbery_auto", "bodily_harm", "criminal_index", "felony_murder","feminicide","homicide","robbery_cellphone","theft_auto","theft_cellphone"];
+const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "criminal_index", label: "Tipo de crime: "}));
 ```
 
 
@@ -93,10 +93,10 @@ const regex = /"(-|)([0-9]+(?:\.[0-9]+)?)"/g
 layer_crimes = JSON.stringify(layer_crimes).replace(regex, '$1$2');
 layer_crimes = JSON.parse(layer_crimes);
 let layer_limite_distritos = await FileAttachment("data/limite_dos_distritos.geojson").json({typed:true});
-layer_crimes.features.forEach(feature => {
-    const properties = feature.properties;
-    properties.crime_total = properties.feminicide + properties.homicide + properties.felony_murder + properties.bodily_harm + properties.theft_cellphone + properties.robbery_cellphone + properties.theft_auto + properties.armed_robbery_auto + properties.criminal_index;
-});
+// layer_crimes.features.forEach(feature => {
+//     const properties = feature.properties;
+//     properties.crime_total = properties.feminicide + properties.homicide + properties.felony_murder + properties.bodily_harm + properties.theft_cellphone + properties.robbery_cellphone + properties.theft_auto + properties.armed_robbery_auto + properties.criminal_index;
+// });
 
 
 
@@ -117,7 +117,7 @@ function transformData(name_values) {
     { "crime": "theft_auto", "value": name_values.theft_auto },
     { "crime": "armed_robbery_auto", "value": name_values.armed_robbery_auto },
     { "crime": "criminal_index", "value": name_values.criminal_index },
-    { "crime": "crime_total", "value": name_values.crime_total }
+    // { "crime": "crime_total", "value": name_values.crime_total }
   ];
 }
 
