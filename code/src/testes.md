@@ -203,11 +203,16 @@ const legend = document.getElementById('legend');
 for (let i = 0; i < colorStops.length - 1; i++) {
     const legendItem = document.createElement('div');
     legendItem.className = 'legend-item';
+    
     const legendColor = document.createElement('div');
     legendColor.className = 'legend-color';
     legendColor.style.backgroundColor = colors[i];
+    
     const legendText = document.createElement('span');
-    legendText.textContent = `${colorStops[i].toFixed(2)} - ${colorStops[i + 1].toFixed(2)}`;
+    const startValue = colorStops[i].toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    const endValue = colorStops[i + 1].toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    legendText.textContent = `${startValue} - ${endValue}`;
+    
     legendItem.appendChild(legendColor);
     legendItem.appendChild(legendText);
     legend.appendChild(legendItem);
@@ -277,21 +282,25 @@ map.on('load', () => {
         popup = null;
     });
 
-    map.on('mousemove', 'layer_crimes', function (e) {
-        map.getCanvas().style.cursor = 'pointer';
-        if (popup) popup.remove();
+map.on('mousemove', 'layer_crimes', function (e) {
+    map.getCanvas().style.cursor = 'pointer';
+    if (popup) popup.remove();
 
-        const coordinates = e.lngLat;
-        const name = e.features[0].properties.name;
-        const value = e.features[0].properties[crimeType]; // substitua pelo campo de interesse
+    const coordinates = e.lngLat;
+    const name = e.features[0].properties.name;
+    const value = e.features[0].properties[crimeType]; // substitua pelo campo de interesse
 
-        const content = `<strong>${name}</strong><br>Valor: ${value}`;
+    // Formate o valor com separadores de milhar
+    const formattedValue = value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
-        popup = new maplibregl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(content)
-            .addTo(map);
-    });
+    const content = `<strong>${name}</strong><br>Valor: ${formattedValue}`;
+
+    popup = new maplibregl.Popup()
+        .setLngLat(coordinates)
+        .setHTML(content)
+        .addTo(map);
+});
+
 
     map.on('click', 'layer_crimes', function (e) {
     const name = e.features[0].properties.name;
