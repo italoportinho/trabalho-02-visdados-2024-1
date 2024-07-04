@@ -3,9 +3,9 @@ title: Pergunta 1
 theme: [glacier,dashboard]
 toc: false
 ---
-<style> body, div, p, li, ol, h1 { max-width: none; } </style>
+<style> body, div, p, li, ol, h1, h2 { max-width: none; } </style>
 
-<h1> 1) Mostrar a evolução dos crimes ao longos dos anos de 2011 a 2018 em um gráfico de linhas. Todos os crimes juntos. Algum crime se destaca? Mostrar índice criminal ao longo dos anos num gráfico de barras. Qual o ano com o maior índice? A partir do ano com maior índice criminal, mostrar HeatMatrix com os meses (eixo y) e os dias do ano(eixo x) com o índice criminal por dia. [Será precisa extrair um dataset do Apache Hive para o ano mais criminoso com essas informações] </h1>
+<h1> 1) Qual foi a evolução do índice criminal ao longo dos anos? Algum crime influência mais que o outro para esse índice?  </h1>
 <hr>
 
 ```js
@@ -18,7 +18,7 @@ let divWidth = 670;
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">
-        Nesta primeira seção do trabalho vamos explorar os atributos do dataset com diversas visualizações para verificar se algum valor específico, ou faixa de valor, desses atributos tem alguma influência relevante na posição da música no conjunto. Serão apresentadas visualizações para o mês de lançamento, o dia de lançamento, BPM, para todas as propriedades percentuais, e também para as propriedades musicais(tom da música). Exceto pela visualização de  dia de lançamento, todas usam o dataset já ordenado pelo número de streams.
+        Nesta primeira seção do trabalho vamos explorar os atributos do dataset com diversas visualizações para verificar se algum crime tem mais influência que outro no índice criminal, a evolução desse índice ao longo dos anos, e para o ano mais violento , uma HeatMatrix com o índice de crimes por dia do ano.
     </p>
 </div>
 <br>
@@ -38,16 +38,6 @@ const multiline_chart_2_data = await db_crimes_all_years.sql`
     FROM crimes_all_years
     ORDER BY year ASC;
 `;
-/*
-const graph_line_data = await db_crimes_all_years.sql`
-  SELECT year, sum(criminal_index) as criminal_index
-    FROM crimes_all_years
-    GROUP BY year
-    ORDER BY year ASC;
-`;
-
-console.log(graph_line_data);
-*/
 const graph_line_BPM = line_chart(dataset_crimes_all_years, "Índice Criminal por ano", "year", "Ano", "criminal_index", "Índice Criminal");
 embed("#chart_dataset_bpm",graph_line_BPM.spec);
 ```   
@@ -56,7 +46,7 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
 </div>
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">   
-        Para analizar o BPM(batidas por minuto) será utilizado um gráfico de linha com pontos, fazendo a relação entre BPM das músicas e a média de streams. Nele podemos verificar que para valores mais baixos na escala de streams, o BPM das músicas oscila bastante entre valores altos e baixos. Porém para valores mais altos da média de stream(aonde estão as  músicas mais populares), podemos constatar  que o valor de BPM possui menos variação.
+        Para analizar a evolução do índice criminal(a some de todos os crimes no período considerado) será utilizado um gráfico de linha com pontos, fazendo a relação entre o ano e a média do índice criminal. Nele podemos verificar o ano de 2017 como o mais violento no período considerado,  e 2014 como o menos violento com um índice criminal aproximadamente 20% menor.
     </p>
 </div>
 <br>
@@ -77,46 +67,11 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
 </div>
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">   
-        Aqui é utilizado um gráfico multilinha para explorar os atributos que são apresentados com um valor percentual. São eles: danceability(o quão dançante é  a música), valence (positividade da música), energy (nível de energia associado à música), acousticness (sons acústicos na música), instrumentalness (proporção de instrumental na música), liveness (presença de elementos de gravação ao vivo na música) e speechiness (presença de vocais na música). Aqui vamos analizar as duas pontas do gráfico para verificar se um valor alto ou baixo de uma propriedade influencia no sucesso da música, e também vamos ver se alguma propriedade é mais relevante que outra.         
+        Nas duas seções acima são usados gráficos multilinha. Na primeira seção avaliamos a prevalência de cada crime por ano, e podemos verificar que os delitos ligados a subtração de aparelhos de telefone celular superam todos os outros delitos em toda a série histórica. Também é notável o enorme aumento desses tipo de crime a partir de 2016 em diante.
+    </p>    
+    <p style="text-align: justify;">   
+      Na segunda seção é analisada a influência de cada crime no índice criminal e podemos verificar que quanto maior o índice criminal, roubo e furto de celular trocam  de posição e para os maiores índices o furto de celular é o mais influente. Também podemos verificar que para os menores índices criminais roubo e furto de carro são tão infleuntes quanto o furto de celular.         
     </p>
-    <ul style="max-width: none;">
-      <li>
-        <p style="text-align: justify;">   
-          <span style="font-weight: 700;">danceability:</span> as músicas com mais streams estão associadas com valores acima de 65, próximos a 70, no entanto as músicas com menos streams também apresentam esse comportamento. 
-        </p>
-      </li>
-      <li>
-        <p style="text-align: justify;">   
-          <span style="font-weight: 700;">valence:</span> essa  é uma propriedade que mostra uma relevância de maiores valores para alcançar o sucesso. As músicas com mais streams apresentam valores entre 60 e 65, enquanto as com menos streams tem valores um pouco acima de 50.
-        </p>
-      </li>
-      <li>
-        <p style="text-align: justify;">   
-          <span style="font-weight: 700;">energy:</span> as músicas com mais streams apresentam valores acima de 70, enquanto as com menos streams estão estávei em torno de 65.
-        </p>
-      </li>
-      <li>
-        <p style="text-align: justify;">   
-          <span style="font-weight: 700;">acousticness:</span> tanto as músicas com menos streams quanto as com mais strams apresentam valores próximo de 30, no entanto na parte média do gráfico tem um grande aumento de valor, mais próximo à 40.
-        </p>
-      </li>
-      <li>
-        <p style="text-align: justify;">   
-          <span style="font-weight: 700;">instrumentalness:</span> essa parece ser uma propriedade irrelevante, todo o conjunto apresenta valores próximo à 0.
-        </p>
-      </li>
-      <li>
-        <p style="text-align: justify;">   
-          <span style="font-weight: 700;">liveness:</span> dois terços do conjunto apresentam valores próximos à 20, no entanto as músicas mais populares apresentam valores abaixo de 10. 
-        </p>
-      </li>
-      <li>
-        <p style="text-align: justify;">   
-          <span style="font-weight: 700;">speechiness:</span> a maior parte do conjunto apresenta valor estável próximo de 8, no entanto as músicas com menos streams apresentam valores acima de 10.
-        </p>
-      </li>
-    </ul>
-    
 </div>
 <br>
 
@@ -608,7 +563,7 @@ function popula_months_array(months_array, dataset){
   return months_array;
 }
 ```
-## Total dos tipos de crime por ano (colocar interação para escolher o ano):
+## Total dos tipos de crime para os anos mais e menos violentos:
 
 
 <div class="grid grid-cols-2">  
@@ -735,8 +690,7 @@ function popula_months_array(months_array, dataset){
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">   
-    Este conjunto de visualizações apresenta o número de lançamentos por mês. O dataset foi ordenado por streams em ordem crescente e dividido em intervalos de quartis. Utilizou-se um gráfico de barras, pois cada mês atua como um "pote" onde os lançamentos são agrupados, permitindo uma comparação visual direta e quantitativa entre os diferentes intervalos. Primeiramente, o gráfico com o dataset completo é apresentado, revelando que os meses de janeiro e maio possuem os maiores números de lançamentos, sendo os únicos com mais de 100. Em seguida, quatro visualizações são mostradas, uma para cada quartil do dataset, dividido com base nos valores de streams.
-    No primeiro gráfico, que representa o primeiro quartil, o mês de maio se destaca. No segundo e terceiro gráfico, o padrão se mantém, com maio continuando a ter destaque. No quarto gráfico, que representa o quartil com os maiores valores de streams, observa-se uma mudança, o mês de janeiro se destaca significativamente. Este último intervalo é o mais relevante para nosso estudo, pois contém as BPMs com os maiores números de visualizações.
+    Esta é uma visualização do total de crimes nos anos de 2014, o menos violento, e do ano de 2017, o mais violento. Os gráficos de barra confirmam o que já vimos no gráfico multilinha, porém aqui podemos quantificar melhor de quanto foi o aumento da criminalidade de 2014 para 2017. Os crimes de roubo de telefone celular que em 2014 estavam abaixo de 500.000 na escala, passam de 600.000 em 2017, um aumento de aproximadamente 22%. Já o crime de furto de telefone celular passou de 231.615 em 2014 para 421.435 em 2017., um aumento de aproximadamente 45%! Da análise dos gráficos também é possível constatar que roubo e furto de carros caiu de 2014 para 2017, o que nos leva a crer que a criminalidade migrou de uma prática para outra, dos crimes de subtração de carros para subtração de telefones celulares.
     </p>
 </div>
 <br>
@@ -752,7 +706,7 @@ function popula_months_array(months_array, dataset){
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">   
-    Nesta visualização, apresentamos um mapa de calor em formato de matriz, com os meses no eixo y e os dias do mês no eixo x. As cores mapeiam o valor de streams em escala logarítmica para cada data, uma escolha feita devido ao grande intervalo de variação no número de streams. Para visualizar o número exato de streams em cada data, o recurso de tooltip pode ser utilizado ao passar o mouse sobre os quadrantes. Quanto mais lançamentos ocorrerem em um determinado dia do mês, mais escura será a cor do quadrante correspondente. Os dias 6 de maio e 1º de janeiro se destacam com as cores mais escuras, corroborando os achados das visualizações de gráfico de barras que já apontavam esses meses como os com maior número de lançamentos de BPMs.
+    Nesta visualização, apresentamos uma mapa de calor em formato de matriz para o ano mais violento do período considerado, 2017, com os meses no eixo y e os dias do mês no eixo x. As cores mapeiam o valor do índice criminal para cada data. Quanto maior o índice criminal em um determinado dia do mês, mais escura será a cor do quadrante correspondente. Destacam-se nessa visualização os dias 18/02/2017 e 18/06/2017. Dia 18 de fevereiro de 2017 foi um fina de semana com comemorações de pré caranaval e podemos verificar que nos finais de semana anterior e posterior(carnaval), o índice criminal também é mais elevado do que dos dias adjacentes. Já o dia 18 de junho de 2017 foi o sábado do feriado prolongado de Corpus Christi, e pela visualização da matriz, foi o dia mais violento de 2017 pois, possuí o maior índice criminal dentre todas as datas do ano. No dia 18 de junho de 2017 também aconteceu a 21ª Parada do Orgulho LGBT de São Paulo, um evento de grande porte, aberto ao público na Avenida Paulista e que registrou diversas ocorrências de furto de celular.
     </p>
 </div>
 <br>
