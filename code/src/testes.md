@@ -52,7 +52,7 @@ toc: false
 ```js
 
 const year = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano"}));
-const crimeTypeOptions = ["armed_robbery_auto", "bodily_harm", "crime_total", "felony_murder","feminicide","homicide","robbery_cellphone","theft_auto","theft_cellphone"];
+const crimeTypeOptions = ["armed_robbery_auto", "bodily_harm", "crime_total","criminal_index", "felony_murder","feminicide","homicide","robbery_cellphone","theft_auto","theft_cellphone"];
 const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "crime_total", label: "Tipo de crime: "}));
 ```
 
@@ -121,28 +121,57 @@ function transformData(name_values) {
   ];
 }
 
+
 function createGraphBar(data, title) {
   return {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "description": "A bar chart showing various crime types and their values.",
     "width": 600,
-    "height": 600-64-83,
+    "height": 600 - 64 - 83,
     "title": title,
     "data": { "values": data },
-    "mark": "bar",
-    "encoding": {
-      "x": { "field": "crime", "type": "nominal", "axis": { "labelAngle": 270 }},
-      "y": { "field": "value", "type": "quantitative" },
-      "tooltip": [
-        { "field": "crime", "type": "nominal", "title": "Crime Type" },
-        { "field": "value", "type": "quantitative", "title": "Value" }
-      ]
+    "mark": {
+      "type": "bar",
+      "tooltip": true
     },
+    "encoding": {
+      "x": { "field": "crime", "type": "nominal", "axis": { "labelAngle": 270 } },
+      "y": { "field": "value", "type": "quantitative" }
+    },
+    "layer": [
+      {
+        "mark": "bar",
+        "encoding": {
+          "tooltip": [
+            { "field": "crime", "type": "nominal", "title": "Crime Type" },
+            { "field": "value", "type": "quantitative", "title": "Value", "format": ",.0f" }
+          ]
+        }
+      },
+      {
+        "mark": {
+          "type": "text",
+          "align": "center",
+          "baseline": "bottom",
+          "dy": -5 // Ajuste vertical para a posição do texto
+        },
+        "encoding": {
+          "text": { 
+            "field": "value", 
+            "type": "quantitative", 
+            "format": ",.0f" 
+          }
+        }
+      }
+    ],
     "config": {
-      "bar": { "width": 30 } // Ajusta a largura das barras
+      "bar": { "width": 30 }, // Ajusta a largura das barras
+      "text": { "fontSize": 12 } // Ajusta o tamanho do texto
     }
   };
 }
+
+
 
 function updateGraph(data) {
     data = transformData(data)
@@ -209,7 +238,12 @@ for (let i = 0; i < colorStops.length - 1; i++) {
     legendColor.style.backgroundColor = colors[i];
     
     const legendText = document.createElement('span');
-    const startValue = colorStops[i].toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    let startValue;
+    if (colorStops[i] === 0) {
+        startValue = colorStops[i].toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    } else {
+        startValue = (1 + colorStops[i]).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     const endValue = colorStops[i + 1].toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     legendText.textContent = `${startValue} - ${endValue}`;
     
@@ -217,6 +251,7 @@ for (let i = 0; i < colorStops.length - 1; i++) {
     legendItem.appendChild(legendText);
     legend.appendChild(legendItem);
 }
+
 
 map.on('load', () => {
     map.addSource('source_crimes', {
