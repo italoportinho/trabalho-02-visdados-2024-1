@@ -8,6 +8,7 @@ toc: false
         display: flex;
         flex-direction: row;
         gap: 20px; 
+        margin-bottom:-200px;
     }
     #map, #vis {
         width: 70%;
@@ -22,8 +23,9 @@ toc: false
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     }
     #legend {
-      position: absolute;
-      bottom: 30px;
+      position: relative;
+      width:10%;
+      bottom: 200px;
       left: 10px;
       background: white;
       padding: 10px;
@@ -44,7 +46,6 @@ toc: false
     }
 </style>
 
-## Testes com o mapa
 <script src='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js'></script>
 <link href='https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css' rel='stylesheet' /> 
 
@@ -54,12 +55,26 @@ toc: false
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
+<h1> Como é a distribuição de crimes por tipo, região e ano na .... de São Paulo?</h1>
+<hr>
 
 ```js
 
 const year = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano"}));
-const crimeTypeOptions = ["armed_robbery_auto", "bodily_harm", "criminal_index", "felony_murder","feminicide","homicide","robbery_cellphone","theft_auto","theft_cellphone"];
-const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "criminal_index", label: "Tipo de crime: "}));
+const crimeTypeOptions = ["Roubo Armado de Carro", "Danos Corporais", "Total de Crimes", "Homicídio Qualificado","Feminicídio","Homicídio","Roubo de Celular","Furto de Carro","Furto de Celular"];
+const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "Total de Crimes", label: "Tipo de crime: "}));
+
+const MapCrimeType = {
+    "Feminicídio": "feminicide",
+    "Homicídio": "homicide",
+    "Homicídio Qualificado": "felony_murder",
+    "Danos Corporais": "bodily_harm",
+    "Furto de Celular": "theft_cellphone",
+    "Roubo de Celular": "robbery_cellphone",
+    "Furto de Carro": "theft_auto",
+    "Roubo Armado de Carro": "armed_robbery_auto",
+    "Total de Crimes": "criminal_index"
+};
 ```
 
 
@@ -114,15 +129,15 @@ let layer_limite_distritos = await FileAttachment("data/limite_dos_distritos.geo
 function transformData(name_values) {
   return [
     { "name" : name_values.name},
-    { "crime": "feminicide", "value": name_values.feminicide },
-    { "crime": "homicide", "value": name_values.homicide },
-    { "crime": "felony_murder", "value": name_values.felony_murder },
-    { "crime": "bodily_harm", "value": name_values.bodily_harm },
-    { "crime": "theft_cellphone", "value": name_values.theft_cellphone },
-    { "crime": "robbery_cellphone", "value": name_values.robbery_cellphone },
-    { "crime": "theft_auto", "value": name_values.theft_auto },
-    { "crime": "armed_robbery_auto", "value": name_values.armed_robbery_auto },
-    { "crime": "criminal_index", "value": name_values.criminal_index },
+    { "crime": "Feminicídio", "value": name_values.feminicide },
+    { "crime": "Homicídio", "value": name_values.homicide },
+    { "crime": "Homicídio Qualificado", "value": name_values.felony_murder },
+    { "crime": "Danos Corporais", "value": name_values.bodily_harm },
+    { "crime": "Furto de Celular", "value": name_values.theft_cellphone },
+    { "crime": "Roubo de Celular", "value": name_values.robbery_cellphone },
+    { "crime": "Furto de Carro", "value": name_values.theft_auto },
+    { "crime": "Roubo armado de Carro", "value": name_values.armed_robbery_auto },
+    { "crime": "Total de Crimes", "value": name_values.criminal_index },
     // { "crime": "crime_total", "value": name_values.crime_total }
   ];
 }
@@ -216,7 +231,7 @@ let name_values = {
 
 updateGraph(name_values);
 
-const crimeValues = layer_crimes.features.map(element => element.properties[crimeType]);
+const crimeValues = layer_crimes.features.map(element => element.properties[MapCrimeType[crimeType]]);
 const maxCrimeValue = Math.max(...crimeValues);
 
 // Define a escala dinâmica baseada no valor máximo
@@ -273,7 +288,7 @@ map.on('load', () => {
             'fill-color': [
                 'interpolate',
                 ['linear'],
-                ['get', crimeType],
+                ['get', MapCrimeType[crimeType]],
                 0, colors[0],
                 colorStops[1], colors[1],
                 colorStops[2], colors[2],
@@ -329,7 +344,7 @@ map.on('mousemove', 'layer_crimes', function (e) {
 
     const coordinates = e.lngLat;
     const name = e.features[0].properties.name;
-    const value = e.features[0].properties[crimeType]; // substitua pelo campo de interesse
+    const value = e.features[0].properties[MapCrimeType[crimeType]]; // substitua pelo campo de interesse
 
     // Formate o valor com separadores de milhar
     const formattedValue = value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -366,3 +381,24 @@ map.on('mousemove', 'layer_crimes', function (e) {
     <div id='vis'></div>
 </div>
 <div id="legend"></div>
+
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">
+      Para responder à pergunta, criamos um mapa detalhado que exibe a quantidade de crimes por tipo nas diversas regiões. Este mapa é complementado por um filtro interativo, permitindo ao usuário selecionar e visualizar dados específicos para diferentes tipos de crime, e para os anos de 2011 a 2018. A intensidade da cor no mapa varia conforme a quantidade de crimes na região, tornando mais fácil identificar áreas com maior incidência criminal.
+      Além disso, desenvolvemos um gráfico de barras interativo à direita do mapa. Quando o usuário clica em uma região específica no mapa, o gráfico de barras atualiza-se automaticamente para mostrar a quantidade detalhada de cada tipo de crime naquela região. Esta abordagem integrada facilita uma análise detalhada e intuitiva dos dados criminais, permitindo uma melhor compreensão das tendências e padrões.
+    </p>
+</div>
+<br>
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">
+      Ao considerar o filtro "Total de Crimes", que representa a soma de todos os tipos de crime, observamos que o bairro de Jaguara apresentou os maiores valores nos anos de 2011 a 2013. Em 2014, os bairros de Santo Amaro, Cidade Ademar, Jabaquara, Cidade Dutra e República destacaram-se com os maiores índices. Em 2015, houve um aumento significativo no número de crimes no bairro da República, uma tendência que se manteve nos anos de 2016, 2017 e 2018, se comparado aos demais. Diante dessa informação, seria interessante investigar os possíveis fatores que contribuíram para o aumento expressivo da criminalidade nesse bairro.
+    </p>
+</div>
+<br>
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">
+      Em relação aos tipos de crimes, observamos que, ao longo de todos os anos analisados, os mais comuns foram roubo armado de carros, roubo de celulares, furto de carros e furto de celulares. Em contrapartida, os crimes de danos corporais, homicídio qualificado, feminicídio e homicídio apresentaram uma incidência proporcionalmente menor quando comparados aos demais.
+    </p>
+</div>
+
+
