@@ -24,7 +24,7 @@ toc: false
     }
     #legend {
       position: relative;
-      width:10%;
+      width:fit-content;
       bottom: 200px;
       left: 10px;
       background: white;
@@ -40,9 +40,9 @@ toc: false
       margin-bottom: 5px;
     }
     .legend-color {
-      width: 20px;
-      height: 20px;
-      margin-right: 10px;
+      width: 15px;
+      height: 15px;
+      margin-right: 5px;
       border-radius: 4px;
     }
 </style>
@@ -62,14 +62,14 @@ toc: false
 ```js
 
 const year = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano"}));
-const crimeTypeOptions = ["Roubo Armado de Carro", "Danos Corporais", "Total de Crimes", "Homicídio Qualificado","Feminicídio","Homicídio","Roubo de Celular","Furto de Carro","Furto de Celular"];
+const crimeTypeOptions = ["Roubo Armado de Carro", "Lesão Corporal", "Total de Crimes", "Homicídio Qualificado","Feminicídio","Homicídio","Roubo de Celular","Furto de Carro","Furto de Celular"];
 const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "Total de Crimes", label: "Tipo de crime: "}));
 
 const MapCrimeType = {
     "Feminicídio": "feminicide",
     "Homicídio": "homicide",
     "Homicídio Qualificado": "felony_murder",
-    "Danos Corporais": "bodily_harm",
+    "Lesão Corporal": "bodily_harm",
     "Furto de Celular": "theft_cellphone",
     "Roubo de Celular": "robbery_cellphone",
     "Furto de Carro": "theft_auto",
@@ -133,7 +133,7 @@ function transformData(name_values) {
     { "crime": "Feminicídio", "value": name_values.feminicide },
     { "crime": "Homicídio", "value": name_values.homicide },
     { "crime": "Homicídio Qualificado", "value": name_values.felony_murder },
-    { "crime": "Danos Corporais", "value": name_values.bodily_harm },
+    { "crime": "Lesão Corporal", "value": name_values.bodily_harm },
     { "crime": "Furto de Celular", "value": name_values.theft_cellphone },
     { "crime": "Roubo de Celular", "value": name_values.robbery_cellphone },
     { "crime": "Furto de Carro", "value": name_values.theft_auto },
@@ -398,7 +398,7 @@ map.on('mousemove', 'layer_crimes', function (e) {
 <br>
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">
-      Em relação aos tipos de crimes, observamos que, ao longo de todos os anos analisados, os mais comuns foram roubo armado de carros, roubo de celulares, furto de carros e furto de celulares. Em contrapartida, os crimes de danos corporais, homicídio qualificado, feminicídio e homicídio apresentaram uma incidência proporcionalmente menor quando comparados aos demais.
+      Em relação aos tipos de crimes, observamos que, ao longo de todos os anos analisados, os mais comuns foram roubo armado de carros, roubo de celulares, furto de carros e furto de celulares. Em contrapartida, os crimes de lesão corporal, homicídio qualificado, feminicídio e homicídio apresentaram uma incidência proporcionalmente menor quando comparados aos demais.
     </p>
 </div>
 
