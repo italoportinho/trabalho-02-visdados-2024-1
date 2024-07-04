@@ -7,14 +7,34 @@ toc: false
     #container{
         display: flex;
         flex-direction: row;
+        gap: 20px; 
     }
-    #map {
+    #map, #vis {
         width: 100%;
         height: 600px;
+        /* border-radius: 15px; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     }
-    #vis {
-        width: 100%;
-        height: 600px;
+    #legend {
+      position: absolute;
+      bottom: 30px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      font-family: Arial, sans-serif;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    .legend-color {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+      border-radius: 4px;
     }
 </style>
 
@@ -105,18 +125,21 @@ function createGraphBar(data, title) {
   return {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "description": "A bar chart showing various crime types and their values.",
-    "width": 700,
-    "height": 300,
+    "width": 600,
+    "height": 600-64-83,
     "title": title,
     "data": { "values": data },
     "mark": "bar",
     "encoding": {
-      "x": { "field": "crime", "type": "nominal", "axis": { "labelAngle": 0 }},
+      "x": { "field": "crime", "type": "nominal", "axis": { "labelAngle": 270 }},
       "y": { "field": "value", "type": "quantitative" },
       "tooltip": [
         { "field": "crime", "type": "nominal", "title": "Crime Type" },
         { "field": "value", "type": "quantitative", "title": "Value" }
       ]
+    },
+    "config": {
+      "bar": { "width": 30 } // Ajusta a largura das barras
     }
   };
 }
@@ -156,6 +179,40 @@ let name_values = {
   "crime_total": 24780
 };
 
+updateGraph(name_values);
+
+const crimeValues = layer_crimes.features.map(element => element.properties[crimeType]);
+const maxCrimeValue = Math.max(...crimeValues);
+
+// Define a escala dinâmica baseada no valor máximo
+const scaleSteps = 9;
+const colorStops = [];
+const colors = ['#F2F12D', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026', '#4A0000'];
+
+
+for (let i = 0; i <= scaleSteps; i++) {
+    colorStops.push(i * (maxCrimeValue / scaleSteps));
+}
+
+// Monta a legenda
+if(document.getElementById('legend')){
+  document.getElementById('legend').innerHTML = '';
+}
+
+const legend = document.getElementById('legend');
+for (let i = 0; i < colorStops.length - 1; i++) {
+    const legendItem = document.createElement('div');
+    legendItem.className = 'legend-item';
+    const legendColor = document.createElement('div');
+    legendColor.className = 'legend-color';
+    legendColor.style.backgroundColor = colors[i];
+    const legendText = document.createElement('span');
+    legendText.textContent = `${colorStops[i].toFixed(2)} - ${colorStops[i + 1].toFixed(2)}`;
+    legendItem.appendChild(legendColor);
+    legendItem.appendChild(legendText);
+    legend.appendChild(legendItem);
+}
+
 map.on('load', () => {
     map.addSource('source_crimes', {
         'type': 'geojson',
@@ -171,24 +228,15 @@ map.on('load', () => {
                 'interpolate',
                 ['linear'],
                 ['get', crimeType],
-                0,
-                '#F2F12D',
-                1000,
-                '#EED322',
-                2000,
-                '#E6B71E',
-                3000,
-                '#DA9C20',
-                4000,
-                '#CA8323',
-                5000,
-                '#B86B25',
-                6000,
-                '#A25626',
-                8000,
-                '#8B4225',
-                10000,
-                '#723122'
+                0, colors[0],
+                colorStops[1], colors[1],
+                colorStops[2], colors[2],
+                colorStops[3], colors[3],
+                colorStops[4], colors[4],
+                colorStops[5], colors[5],
+                colorStops[6], colors[6],
+                colorStops[7], colors[7],
+                colorStops[8], colors[8]
             ],
             'fill-opacity': 1
         }
@@ -257,8 +305,6 @@ map.on('load', () => {
         name_values = {}; // Se não encontrar, reseta o valor
     }
 
-
-    console.log(transformData(name_values));
     updateGraph(name_values);
     });
 });
@@ -268,5 +314,5 @@ map.on('load', () => {
 <div id="container">
     <div id='map'></div>
     <div id='vis'></div>
-</div
-
+</div>
+<div id="legend"></div>
