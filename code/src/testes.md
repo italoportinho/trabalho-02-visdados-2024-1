@@ -10,7 +10,13 @@ toc: false
         gap: 20px; 
     }
     #map, #vis {
-        width: 50%;
+        width: 70%;
+        height: 600px;
+        /* border-radius: 15px; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    }
+    #vis {
+        width: 30%;
         height: 600px;
         /* border-radius: 15px; 
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
@@ -126,7 +132,7 @@ function createGraphBar(data, title) {
   return {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "description": "A bar chart showing various crime types and their values.",
-    "width": 600,
+    "width": "container",
     "height": 600 - 64 - 83,
     "title": title,
     "data": { "values": data },
