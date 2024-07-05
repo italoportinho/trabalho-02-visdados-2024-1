@@ -13,12 +13,12 @@ import * as vega from "npm:vega";
 import * as vegaLite from "npm:vega-lite";
 import * as vegaLiteApi from "npm:vega-lite-api";
 import embed from "npm:vega-embed";
-let divWidth = 670;
+let divWidth = Generators.width(document.querySelector(".grid"));
 ```
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">
-        Nesta primeira seção do trabalho vamos explorar os atributos do dataset com diversas visualizações para verificar se algum crime tem mais influência que outro no índice criminal, a evolução desse índice ao longo dos anos, e para o ano mais violento , uma HeatMatrix com o índice de crimes por dia do ano.
+        Nesta primeira seção do trabalho vamos explorar os atributos do dataset com diversas visualizações para verificar se algum crime tem mais influência que outro no índice criminal (variável criada com a soma de todos os crimes), a evolução desse índice ao longo dos anos, e para o ano mais violento , uma HeatMatrix com o índice de crimes por dia do ano.
     </p>
 </div>
 <br>
@@ -52,7 +52,7 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
 <br>
 
 
-## Crime mais prevalente por ano(média)
+## Soma dos Crimes pelos anos
 <div class="grid grid-cols-1">
   <div class="card" id="multiline_chart">         
       ${ vl.render(multiline_chart(dataset_crimes_all_years)) }
@@ -82,15 +82,10 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
 */
 
 // Carregamos o dataset.
-let dataset = await FileAttachment("data/spotify-2023.csv").csv({typed: true});
 let dataset_crimes_all_years = await FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true});
 
 const db_crimes_all_years = await DuckDBClient.of({crimes_all_years: FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true})});
 
-
-//console.log(dataset_crimes_all_years);
-// Ordenamos o dataset por streams, de forma CRESCENTE.
-dataset = dataset.sort((a, b) => (a.streams > b.streams ? 1 : -1));
 
 const db_dataset_crimes_dia_2017 = await DuckDBClient.of({crimes_dia_2017: FileAttachment("data/crimes_dia_2017_no_nulls.csv").dsv({delimiter: ";", typed: true})});
 
@@ -140,7 +135,7 @@ const vl = vegaLiteApi.register(vega, vegaLite);
 function bar_chart(data_array, titulo, campo_x, titulo_x, campo_y, titulo_y){
     return {
         spec: {
-          width: "container",
+          width: divWidth*0.35,
             data: {
                 values: data_array
             },
@@ -155,50 +150,22 @@ function bar_chart(data_array, titulo, campo_x, titulo_x, campo_y, titulo_y){
                 x: {
                     field: "crime",
                     title: "Crime",
-                    sort: null,                    
+                    sort: null               
                 },
                 color: {field: "crime"},
                 tooltip: [
-                  {field: "valor", type: "quantitative", title: "Total"}
+                  {field: "valor", type: "quantitative", title: "Total", format: ",.0f"    }
                 ],                
             }
         }
     }
 }
 
-function bar_chart2(data_array, titulo, campo_x, titulo_x, campo_y, titulo_y){
-  return {
-    spec: {
-      data: {
-          values: data_array
-      },
-      width: "container",
-      mark: "bar",
-      title: titulo,
-      encoding: {
-        x: {
-            field: "tom_da_musica",
-            title: "Tom da música",
-            sort: null
-        },
-        y: {
-            field: "streams",
-            type: "quantitative",
-            title: "Total de streams"
-        } ,
-        tooltip: [
-        {field: campo_y, title: titulo_y},
-        {field: campo_x, title: titulo_x, format:","}
-        ],                
-      },
-    }
-  }
-}
 
 function line_chart(data_array, titulo, campo_x, title_x, campo_y, title_y){
   return {
     spec: {
-      width: "container",
+      width: divWidth*0.9,
       data: {
           values: data_array
       },
@@ -234,7 +201,7 @@ function multiline_chart(data_array){
   return {
     spec: {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      width: "600",
+      width: divWidth*0.8,
       height: "400",
       data: {
         values: data_array
@@ -243,9 +210,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: { field: "year", type: "quantitative", title: "Ano",  "axis": {"format": "d"}},
             y: {
-              aggregate: "sum", field: "feminicide", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "feminicide", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "feminicide", "type": "nominal"},
           },
@@ -254,9 +221,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: { field: "year", type: "quantitative" },
             y: {
-              aggregate: "sum", field: "homicide", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "homicide", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "homicide", "type": "nominal"},
           },
@@ -265,9 +232,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: { field: "year", type: "quantitative" },
             y: {
-              aggregate: "sum", field: "felony_murder", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "felony_murder", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "felony_murder", "type": "nominal"},
           },
@@ -276,9 +243,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: {field: "year", type: "quantitative" },
             y: {
-              aggregate: "sum", field: "bodily_harm", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "bodily_harm", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "bodily_harm", "type": "nominal"},
           },
@@ -287,9 +254,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: {field: "year", type: "quantitative" },
             y: {
-              aggregate: "sum", field: "theft_cellphone", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "theft_cellphone", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "theft_cellphone", "type": "nominal"},
           },
@@ -298,9 +265,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: { field: "year", type: "quantitative" },
             y: {
-              aggregate: "sum", field: "robbery_cellphone", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "robbery_cellphone", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "robbery_cellphone", "type": "nominal"},
           },
@@ -309,9 +276,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: {field: "year", type: "quantitative" },
             y: {
-              aggregate: "sum", field: "theft_auto", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "theft_auto", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "theft_auto", "type": "nominal"},
           },
@@ -320,9 +287,9 @@ function multiline_chart(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "year", type: "quantitative" },
+            x: {field: "year", type: "quantitative" },
             y: {
-              aggregate: "sum", field: "armed_robbery_auto", type: "quantitative", title: "Média do valor da propriedade"
+              aggregate: "sum", field: "armed_robbery_auto", type: "quantitative", title: "Soma dos valores"
             },
             color: { datum: "armed_robbery_auto", "type": "nominal"},
           },
@@ -337,7 +304,7 @@ function multiline_chart_2(data_array){
   return {
     spec: {
       "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-      width: "600",
+      width: divWidth*0.8,
       height: "400",
       data: {
         values: data_array
@@ -346,7 +313,7 @@ function multiline_chart_2(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
             y: {
               aggregate: "mean", field: "feminicide", type: "quantitative", title: "Média do valor da propriedade"
             },
@@ -357,7 +324,7 @@ function multiline_chart_2(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
             y: {
               aggregate: "mean", field: "homicide", type: "quantitative", title: "Média do valor da propriedade"
             },
@@ -368,7 +335,7 @@ function multiline_chart_2(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
             y: {
               aggregate: "mean", field: "felony_murder", type: "quantitative", title: "Média do valor da propriedade"
             },
@@ -390,7 +357,7 @@ function multiline_chart_2(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
             y: {
               aggregate: "mean", field: "theft_cellphone", type: "quantitative", title: "Média do valor da propriedade"
             },
@@ -401,7 +368,7 @@ function multiline_chart_2(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
             y: {
               aggregate: "mean", field: "robbery_cellphone", type: "quantitative", title: "Média do valor da propriedade"
             },
@@ -412,7 +379,7 @@ function multiline_chart_2(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
             y: {
               aggregate: "mean", field: "theft_auto", type: "quantitative", title: "Média do valor da propriedade"
             },
@@ -423,7 +390,7 @@ function multiline_chart_2(data_array){
         {
           mark: "line",
           encoding: {
-            x: { bin: true, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
+            x: { bin: false, field: "criminal_index", type: "quantitative", title: "Índice criminal" },
             y: {
               aggregate: "mean", field: "armed_robbery_auto", type: "quantitative", title: "Média do valor da propriedade"
             },
@@ -436,10 +403,9 @@ function multiline_chart_2(data_array){
   }
 }
 
-console.log(heatmatrix_data.batches[0].data.children[0]);
 
 const graph_heatmatrix = {
-    width: "container",
+    width: divWidth*0.85,
     height: "268",
     "data": { values: heatmatrix_data},
     "title": "Índice de criminalidade em cada dia de 2017",
@@ -514,54 +480,6 @@ const graph_heatmatrix = {
 }
 
 embed("#chart_heatmatrix", graph_heatmatrix)
-
-function popula_months_array(months_array, dataset){
-  // Iteramos no dataset para extrair os lançamentos por mês e popular o array.
-  for(var i=0;i<dataset.length;i++){
-    switch(dataset[i].released_month){
-      case 1: 
-        months_array[0].lancamentos++; 
-        break;
-      case 2:
-        months_array[1].lancamentos++;
-        break;
-      case 3:
-        months_array[2].lancamentos++;
-        break;
-      case 4:
-        months_array[3].lancamentos++;
-        break;
-      case 5:
-        months_array[4].lancamentos++;
-        break;
-      case 6:
-        months_array[5].lancamentos++;
-        break;
-      case 7:
-        months_array[6].lancamentos++;
-        break;
-      case 8:
-        months_array[7].lancamentos++;
-        break;
-      case 9:
-        months_array[8].lancamentos++;
-        break;
-      case 10:
-        months_array[9].lancamentos++;
-        break;
-      case 11:
-        months_array[10].lancamentos++;
-        break;
-      case 12:
-        months_array[11].lancamentos++;
-        break;
-      default:
-        //do nothing
-        break;
-    }
-  }
-  return months_array;
-}
 ```
 ## Total dos tipos de crime para os anos mais e menos violentos:
 

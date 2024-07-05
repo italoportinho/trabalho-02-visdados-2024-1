@@ -1,251 +1,379 @@
 ---
-title: Pergunta 2
 theme: [glacier]
+title: Pergunta 2
 ---
-<style> body, div, p, li, ol, h1 { max-width: none; } </style>
+<style> body, div, p, li, ol, h1, h2, h3 { max-width: none; } 
 
-```js
-const divWidth = Generators.width(document.querySelector(".grid"));
-```
+.yearSelect {
+    width: calc(100% - 20px);
+    background-color: white; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000000000000000000;
+    border-radius: 10px;
+    margin-bottom: 50px;
+    padding-left: 10px; 
+    padding-right: 10px; 
+}
 
-<h1> 2) Qual é o crime mais prevalente em cada distrito?</h1>
+.yearSelect > div {
+    margin-top: -25px; /* Adiciona 5px de espaço acima de cada item */
+    margin-bottom: -25px; /* Adiciona 5px de espaço abaixo de cada item */
+}
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-statistics@7.7.4/dist/simple-statistics.min.js"></script>
+
+<h1> 2) Como é a concentração de crimes para cada distrito em relação aos anos?</h1>
 <hr>
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">
-        Nesta seção do trabalho vamos analisar as relações entre o top 10 de músicas e o top 10 de artistas, ano a ano, e usar um conjunto de visualizações para tentar extrair alguma informação relevante. Começaremos listando a quantidade de músicas lançadas por ano, para verificarmos os anos mais relevantes. Temos que levar em consideração que o dataset utilizado não é um conjunto completo de todas as músicas lançadas em cada ano, portanto muitos anos terão pouquíssimos ou nenhum lançamento. Serão utilizados gráficos de barras, em três visualizações por ano, para comparar os artistas do top 10 com quantas músicas foram necessárias para alcançar o top 10, e se algum desses artistas está presente no top 10 das músicas.
+    Para esta seção, iremos analisar a ocorrência de crimes nos distritos. Utilize o filtro abaixo para alterar o intervalo de anos dos dados, que atualizará automaticamente os gráficos e tabelas geradas. Além disso, dois filtros permitem que você selecione os tipos de crime que deseja analisar, possibilitando a construção de um gráfico de dispersão para estudar a correlação entre esses diferentes crimes. Iremos levar em consideração para a nossa análise nessa seção todos os anos, porém o usuário pode facilmente filtrar os anos que tiver interesse e tirar suas próprias conclusões.
     </p>
 </div>
 <br>
 
-## Total de lançamentos por ano
-
-<div class="grid grid-cols-1">
-  <div class="card" id="total_musicas_ano">  
-      <span style="font-size: 80%;"></span>  
-
 ```js
-embed("#total_musicas_ano",bar_chart2(lancamentos_por_ano, "Total de músicas lançadas em cada ano", "Ano", "Ano", "Musicas", "Total de lançamentos").spec)
-```
+function calculateCorrelation(x, y) {
+    const n = x.length;
+    const sum_x = x.reduce((a, b) => a + b, 0);
+    const sum_y = y.reduce((a, b) => a + b, 0);
+    const sum_x_sq = x.reduce((a, b) => a + b * b, 0);
+    const sum_y_sq = y.reduce((a, b) => a + b * b, 0);
+    const sum_xy = x.reduce((sum, xi, i) => sum + xi * y[i], 0);
 
-  </div>  
-</div>
-<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
-    <p style="text-align: justify;">   
-        Dessa visualização podemos constatar que o ano com  mais lançamentos é 2022, e o segundo colocado tem menos da metade dos lançamentos, e o terceiro menos de um terço. Concluímos que o ano mais relevante para análise, levando em consideração o número de registros,  é 2022. Abaixo utilizaremos três visualizações para comparar o número de streams dos artistas com o número de músicas lançadas e o top 10 de músicas desse ano.
-    </p>
-</div>
-<br>
+    const numerator = n * sum_xy - sum_x * sum_y;
+    const denominator = Math.sqrt((n * sum_x_sq - sum_x ** 2) * (n * sum_y_sq - sum_y ** 2));
 
-## Top 10 de artistas por streams (2022)
-<div class="grid grid-cols-1">
-  <div class="card" id="top_10_artistas_2022">  
-      <span style="font-size: 80%;"></span>  
-
-
-```js
-embed("#top_10_artistas_2022",bar_chart2(top_10_artistas_2022, "Total de streams no ano", "Artista", "Artista", "total_streams", "Total de streams").spec)
-```
-
-  </div>  
-</div>
-
-## Quantas músicas para chegar ao top 10? (2022)
-
-<div class="grid grid-cols-1">
-  <div class="card" id="count_musicas_artistas">  
-      <span style="font-size: 80%;"></span>  
-
-```js
-embed("#count_musicas_artistas",bar_chart2(artists_array.slice(0, 10), "Músicas por Artista", "artists_name", "Artista", "musicas", "Total de músicas").spec)
-```
-
-  </div>  
-</div>
-
-<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
-    <p style="text-align: justify;">   
-        No primeiro gráfico (Top 10 de artistas) são listados os 10 artistas com mais streams em 2022, e desse conjunto totalizamos quantas músicas foram necessárias para cada artista chegar à esse top 10. Na segunda visualização podemos constatar que metade dos artistas teve que lançar mais de 10 músicas somente em 2022 para chegar ao top 10!
-    </p>
-</div>
-<br>
-
-
-
-
-```js
-import * as vega from "npm:vega";
-import * as vegaLite from "npm:vega-lite";
-import * as vegaLiteApi from "npm:vega-lite-api";
-import embed from "npm:vega-embed";
-// Carregamos o dataset.
-let dataset = await FileAttachment("data/spotify-2023.csv").csv({typed: true});
-const db = await DuckDBClient.of({spotify: FileAttachment("data/spotify-2023.csv").csv({typed: true})});
-
-const top_10_musicas_geral = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2023 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2023' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2022 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2022' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2021 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2021' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2020 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2020' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2019 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2019' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2018 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2018' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2017 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2017' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2016 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2016' ORDER BY streams DESC LIMIT 10`;
-const top_10_musicas_2015 = await db.sql`SELECT track_name, artists_name, streams, released_year FROM spotify WHERE released_year = '2015' ORDER BY streams DESC LIMIT 10`;
-
-//view(Inputs.table(top_10_musicas_geral));
-//view(Inputs.table(top_10_musicas_2022));
-
-const top_10_artistas_geral = await db.sql`SELECT artists_name, sum(streams) as total_streams FROM spotify WHERE streams is NOT NULL GROUP BY artists_name ORDER BY total_streams DESC LIMIT 10`;
-const top_10_artistas_2023 = await db.sql`SELECT artists_name, released_year, sum(streams) as total_streams FROM spotify WHERE streams is NOT NULL AND released_year = '2023' GROUP BY artists_name, released_year ORDER BY total_streams DESC LIMIT 10`;
-const top_10_artistas_2022 = await db.sql`SELECT artists_name as "Artista", released_year as "Ano", sum(streams) as total_streams FROM spotify WHERE streams is NOT NULL AND released_year = '2022' GROUP BY artists_name, released_year ORDER BY total_streams DESC LIMIT 10`;
-const top_10_artistas_2021 = await db.sql`SELECT artists_name, released_year, sum(streams) as total_streams FROM spotify WHERE streams is NOT NULL AND released_year = '2021' GROUP BY artists_name, released_year ORDER BY total_streams DESC LIMIT 10`;
-const top_10_artistas_2020 = await db.sql`SELECT artists_name, released_year, sum(streams) as total_streams FROM spotify WHERE streams is NOT NULL AND released_year = '2020' GROUP BY artists_name, released_year ORDER BY total_streams DESC LIMIT 10`;
-const top_10_artistas_2019 = await db.sql`SELECT artists_name, released_year, sum(streams) as total_streams FROM spotify WHERE streams is NOT NULL AND released_year = '2019' GROUP BY artists_name, released_year ORDER BY total_streams DESC LIMIT 10`;
-const top_10_artistas_2018 = await db.sql`SELECT artists_name, released_year, sum(streams) as total_streams FROM spotify WHERE streams is NOT NULL AND released_year = '2018' GROUP BY artists_name, released_year ORDER BY total_streams DESC LIMIT 10`;
-
-//view(Inputs.table(top_10_artistas_2022));
-
-let artists_array = [];
-for (let i=0; i<dataset.length; i++) {
-    if(dataset[i].released_year == 2022){
-        let artist_name = dataset[i].artists_name;
-        let achou = false;
-        for(let j=0;j<artists_array.length;j++){
-            if(artists_array[j].artists_name == artist_name){
-                artists_array[j].musicas++;
-                artists_array[j].streams = artists_array[j].streams + dataset[i].streams;
-                achou = true;
-            }
-        }
-        if(!achou){
-            let new_artist = { artists_name: dataset[i].artists_name, musicas: 1, streams: dataset[i].streams };
-            artists_array.push(new_artist);
-        }
-    }    
+    if (denominator === 0) return 0;
+    return numerator / denominator;
 }
-//console.log(artists_array.sort((a, b) => (a.musicas < b.musicas ? 1 : -1)));
-artists_array = artists_array.sort((a, b) => (a.streams < b.streams ? 1 : -1));
-console.log(artists_array.slice(0,10));
+```
 
-//view(Inputs.table(top_10_musicas_2022));
 
-/* ------------------------------------------------------------- */
 
-//view(Inputs.table(top_10_artistas_2023));
-const artists_music_count_2023 = await db.sql`
-    SELECT 
-        artists_name, released_year, count(1) as musicas 
-    FROM spotify 
-    WHERE 
-        streams is NOT NULL AND released_year = 2023
-    GROUP BY  artists_name,  released_year
-    ORDER BY musicas DESC LIMIT 10`;
-//view(Inputs.table(artists_music_count_2023));
+<div class="yearSelect">
 
-/* ------------------------------------------------------------- */
+<div style="display: flex; justify-content: space-between; width: 100%; margin-bottom:10px; margin-top:30px;">
 
-//view(Inputs.table(top_10_artistas_2021));
-const artists_music_count_2021 = await db.sql`
-    SELECT 
-        artists_name, released_year, count(1) as musicas 
-    FROM spotify 
-    WHERE 
-        streams is NOT NULL AND released_year = 2021
-    GROUP BY  artists_name,  released_year
-    ORDER BY musicas DESC LIMIT 10`;
-//view(Inputs.table(artists_music_count_2021));
+```js
+let yearInf = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano Inferior"}));
+```
 
-/* ------------------------------------------------------------- */
+```js
+let yearSup = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano Superior"}));
+```
 
-const lancamentos_por_ano = await db.sql`
-    SELECT 
-         released_year as "Ano", count(1) as "Musicas" 
-    FROM spotify 
-    WHERE 
-        streams is NOT NULL 
-    GROUP BY  released_year
-    ORDER BY musicas DESC`;
+</div>
 
-function bar_chart2(data_array, titulo, campo_x, titulo_x, campo_y, titulo_y){
-  return {
-    spec: {
-      data: {
-          values: data_array
+```js
+const box = ["feminicide", "homicide", "felony_murder", "bodily_harm", "theft_cellphone", "robbery_cellphone", "theft_auto", "armed_robbery_auto", "criminal_index"]
+let selectBox_x = view(Inputs.select(["criminal_index"].concat(box), {label: "Tipo de crime X"}));
+let selectBox_y = view(Inputs.select(["criminal_index"].concat(box), {label: "Tipo de crime Y"}));
+```
+
+</div>
+
+
+```js
+let dataset_crimes_all_years = await FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true});
+let dataset = dataset_crimes_all_years.filter(element => element.year >= yearInf && element.year <= yearSup);
+let dataset_x = dataset.map(element => element[selectBox_x]);
+let dataset_y = dataset.map(element => element[selectBox_y]);
+let data_scatter = dataset.map(element => ({
+    x: element[selectBox_x],
+    y: element[selectBox_y],
+    year: element.year,
+    name: element.name
+}));
+const boxExtended = [...box, "year", "name"];
+const data_boxplot = dataset.map(element => {
+    let entry = {};
+    boxExtended.forEach(property => {
+        entry[property] = element[property];
+    });
+    return entry;
+});
+
+let coor = calculateCorrelation(dataset_x, dataset_y);
+
+```
+
+
+```js
+const data_table = dataset.map(element => {
+    let entry = {};
+    boxExtended.forEach(property => {
+        entry[property] = element[property];
+    });
+    return entry;
+});
+
+const maxCrimes = {};
+
+data_table.forEach(entry => {
+  box.forEach(crime => {
+    if(crime !== "criminal_index"){
+        if (!maxCrimes[entry.name] || entry[crime] > maxCrimes[entry.name].Value) {
+        maxCrimes[entry.name] = {
+            "District": entry.name,
+            "Crime": crime,
+            "Value": entry[crime],
+            "Year": entry.year 
+        };
+        }
+    }
+  });
+});
+const maxCrimesArray = Object.values(maxCrimes);
+view(Inputs.table(maxCrimesArray, {columns: ["District", "Crime", "Value", "Year"]}));
+```
+
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">
+      A tabela acima inclui todos os distritos presentes em nossa base de dados, exibindo a maior quantidade de crimes já registrada, o tipo desse crime e o ano em que ocorreu. Ao ajustar os filtros de ano para o intervalo de 2011 a 2018, podemos observar que os crimes mais comuns foram roubo e furto de celulares. Esses altos valores de crimes prevaleceram principalmente entre os anos de 2017 e 2018, sugerindo uma tendência de crescimento desse tipo de crime ao longo dos anos.
+    </p>
+</div>
+<br>
+
+```js
+const maxCrimesByType = {};
+
+data_table.forEach(entry => {
+  box.forEach(crime => {
+
+    if (!maxCrimesByType[crime] || entry[crime] > maxCrimesByType[crime].Value) {
+    maxCrimesByType[crime] = {
+        "Crime": crime,
+        "Value": entry[crime],
+        "District": entry.name,
+        "Year": entry.year
+    };
+        
+    }
+  });
+});
+
+
+
+const maxCrimesByTypeArray = Object.values(maxCrimesByType).filter(d => d.Value > 0);
+
+console.log(maxCrimesByTypeArray)
+
+const graph_bar = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Gráfico de barras mostrando o maior crime por tipo",
+  "width": "container",
+  "height": 500,
+  "data": {
+    "values": maxCrimesByTypeArray
+  },
+  "layer": [
+    {
+      "mark": "bar",
+      "encoding": {
+        "x": {
+          "field": "Crime",
+          "type": "nominal",
+          "title": "Tipo de Crime",
+          "axis": {
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "Value",
+          "type": "quantitative",
+          "title": "Maior Observação"
+        },
+        "color": {
+          "field": "District",
+          "type": "nominal",
+          "title": "Distrito",
+          "legend": {
+            "title": "Distrito"
+          }
+        },
+        "tooltip": [
+          { "field": "Crime", "type": "nominal", "title": "Tipo de Crime" },
+          { "field": "Value", "type": "quantitative", "title": "Maior Observação", "format": ",.0f" },
+          { "field": "District", "type": "nominal", "title": "Distrito" },
+          { "field": "Year", "type": "nominal", "title": "Ano"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "dy": -10,
+        "fontSize": 12,
+        "align": "center"
       },
-      width: "container",
-      mark: "bar",
-      title: titulo,
-      encoding: {
-        x: {
-            field: campo_x,
-            title: titulo_x,
-            sort: null
+      "encoding": {
+        "x": {
+          "field": "Crime",
+          "type": "nominal"
         },
-        y: {
-            field: campo_y,
-            type: "quantitative",
-            title: titulo_y
+        "y": {
+          "field": "Value",
+          "type": "quantitative"
         },
-        tooltip: [
-            {field: campo_y, title: titulo_y},
-            {field: campo_x, title: titulo_x}
-        ],                   
+        "text": {
+          "field": "Value",
+          "type": "quantitative",
+          "format": ",.0f"
+        }
       }
     }
-  }
-}
+  ]
+};
 
-const chart_top_10_musicas_2022_embed = {
-    data: {
-        values: top_10_musicas_2022
-    },
-    width: "container",
-    mark: "bar",
-    title: "Top 10 músicas - 2022",
-    encoding: {
-        x: {
-            field: "track_name",
-            title: "Música",
-            sort: null
-        },
-        y: {
-            field: "streams",
-            type: "quantitative",
-            title: "Streams"
-        },
-        tooltip: [
-            {
-                field: "artists_name", 
-                type: "nominal", 
-                title: "Artista: ",
-            },
-            {
-                field: "track_name", 
-                type: "nominal", 
-                title: "Música: ",
-            },
-            {
-                field: "streams",
-                type: "quantitative",                
-                title: "streams",
-                format:","
-            }
-        ]                
-    }
-}
-embed('#chart_top_10_musicas_2022', chart_top_10_musicas_2022_embed)
-
+vegaEmbed('#vis0', graph_bar);
 ```
 
-## Top 10 músicas no ano. (2022)
-
-<div class="grid grid-cols-1">
-  <div class="card" id="chart_top_10_musicas_2022"></div>  
+<div class="grid grid-cols-1"> 
+    <div id="vis0" class="card"></div>
 </div>
+
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
-    <p style="text-align: justify;">   
-        Nesse gráfico é apresentado o top 10 de músicas em 2022. Passando o mouse sobre as barras do gráfico é possível observar os valores dos campos e constatamos que 4 artistas presentes nas duas visualizações anteriores estão com um música presente no top 10.
+    <p style="text-align: justify;">
+      Para representar o maior número de crimes já observado por tipo, utilizamos barras como marcadores para os tipos de crime e cores para indicar os distritos onde essas observações ocorreram. Ao levar o mouse para cima da barra, o usuário pode também observar o nome do distrito, o tipo de crime, a quantidade observada e o ano de ocorrência. Observamos que, ao considerar todo o intervalo de anos da nossa base de dados, o distrito República apresentou os maiores valores de roubo e furto de celulares. O distrito Jaguara destacou-se com os maiores valores de furto de carro e homicídio. Os maiores valores de roubo a mão armada foram registrados no distrito de Jabaquara. Outros tipos de crimes, como lesão corporal, homicídio qualificado e feminicídio, não apresentaram valores relevantes em nossa base de dados.
     </p>
 </div>
 <br>
+
+<div class="grid grid-cols-1"> 
+    <div id="vis1" class="card"></div>
+</div>
+
+```js
+
+const graph_boxplot = {
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "Distribuição das propriedades de crimes por distrito",
+  "width": "container",
+  "height": 500,
+  "data": {
+    "values": data_boxplot
+  },
+  "transform": [
+    {
+      "fold": box,
+      "as": ["Crime Property", "Value"]
+    }
+  ],
+  "mark": "boxplot",
+  "encoding": {
+    "x": {
+      "field": "Crime Property",
+      "type": "nominal",
+      "title": "Tipos de Crime"
+    },
+    "y": {
+      "field": "Value",
+      "type": "quantitative",
+      "title": "Número de Ocorrências",
+    },
+    "tooltip": [
+        { "field": "Crime Property", "type": "nominal", "title": "Tipo de Crime" },
+        { "field": "Value", "type": "quantitative", "title": "Número de Ocorrências", "format": ",.0f" },
+        { "field": "name", "type": "nominal", "title": "Distrito" },
+        { "field": "year", "type": "quantitative", "title": "Ano" }
+    ]
+  }
+};
+
+
+vegaEmbed('#vis1', graph_boxplot);
+
+```
+
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">
+      Para analisar a variação dos valores de crimes por tipo, construímos um gráfico boxplot. Este gráfico permite observar percentis importantes, o intervalo dos valores observados e a presença de outliers. Ao passar o mouse sobre as barras, o usuário pode verificar os intervalos de valores e percentis. Ao passar o mouse sobre os pontos, que representam os outliers, o usuário pode ver em qual distrito o outlier ocorreu, o ano e a quantidade observada.
+    </p>
+    <br>
+    <p style="text-align: justify;">
+      Em relação a todo o período dos dados, não tivemos valores significativos para construir boxplots de maneira satisfatória para lesão corporal, homicídio qualificado, feminicídio e homicídio. Para os demais tipos de crimes, observamos uma alta presença de outliers, destacando-se visualmente a maior ocorrência de outliers para o crime de furto de celulares.
+    </p>
+</div>
+<br>
+
+
+
+
+```js
+const graph_scatter = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "",
+    "width": "container",
+    "height": 500,
+    "data": { "values": data_scatter },
+    "layer": [
+        {
+            "mark": "point",
+            "encoding": {
+                "x": {
+                    "field": "x",
+                    "type": "quantitative",
+                    "title": selectBox_x
+                },
+                "y": {
+                    "field": "y",
+                    "type": "quantitative",
+                    "title": selectBox_y
+                },
+                "tooltip": [
+                    { "field": "name", "type": "nominal", "title": "Nome" },
+                    { "field": "x", "type": "quantitative", "title": selectBox_x, "format": ",.0f" },
+                    { "field": "y", "type": "quantitative", "title": selectBox_y, "format": ",.0f" },
+                    { "field": "year", "type": "quantitative", "title": "Ano" }
+                ]
+            }
+        },
+        {
+            "mark": {
+                "type": "text",
+                "align": "left",
+                "baseline": "top",
+                "dx": 5,
+                "fontSize": 16
+            },
+            "encoding": {
+                "x": { "value": 700 },
+                "y": { "value": 0 },
+                "text": { "value": `Correlação: ${coor.toFixed(2)}` }
+            }
+        }
+    ]
+};
+vegaEmbed('#vis2', graph_scatter);
+```
+
+
+
+<div class="grid grid-cols-1"> 
+    <div id="vis2" class="card grid-colspan-1"></div>
+</div>
+
+<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
+    <p style="text-align: justify;">
+      Para estudar a relação entre os tipos de crimes, optamos pelo uso do gráfico de dispersão devido à sua capacidade de visualizar a relação entre duas variáveis quantitativas de maneira clara e intuitiva, permitindo que o usuário selecione as variáveis desejadas através dos filtros. Este tipo de gráfico nos permite representar as observações da nossa base de dados por marcadores de pontos, facilitando a identificação de padrões ou tendências. Ao passar o mouse sobre os pontos do gráfico, o usuário pode visualizar o nome do distrito, as quantidades dos crimes e o ano de ocorrência. Além disso, como complemento à visualização do gráfico de dispersão, calculamos o coeficiente de correlação entre os tipos de crimes selecionados, oferecendo uma medida quantitativa da relação entre eles.
+    </p>
+    <br>
+    <p style="text-align: justify;">
+      Este gráfico permite estudar a relação entre qualquer combinação de dois tipos de crimes. Por exemplo, ao analisar roubo e furto de celulares durante todo o período de anos, observamos uma correlação de 0.43. Embora seja fraca, isso pode indicar que esses dois tipos de crime possuem alguma relação direta, o que faz sentido, pois ambos envolvem celulares. Da mesma forma, podemos analisar furto e roubo a mão armada de veículos, que apresentam uma correlação de 0.35. Ao comparar roubo a mão armada de carro e roubo de celulares, encontramos uma correlação de 0.56, indicando uma relação mais significativa, possivelmente porque ambos estão relacionados ao roubo. Por outro lado, ao comparar furto de carro e furto de celulares, a correlação é de apenas 0.18, considerada baixa.
+    </p>
+</div>
+<br>
+
+
+
+
+
+
