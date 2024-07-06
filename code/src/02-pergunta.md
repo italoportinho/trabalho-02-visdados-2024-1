@@ -54,7 +54,7 @@ function calculateCorrelation(x, y) {
     if (denominator === 0) return 0;
     return numerator / denominator;
 }
-
+let divWidth = Generators.width(document.querySelector(".grid"));
 ```
 
 
@@ -96,8 +96,8 @@ function translateCrimeNames(data_array) {
 }
 
 const box = [MapCrimeType["feminicide"], MapCrimeType["homicide"], MapCrimeType["felony_murder"], MapCrimeType["bodily_harm"], MapCrimeType["theft_cellphone"], MapCrimeType["robbery_cellphone"], MapCrimeType["theft_auto"], MapCrimeType["armed_robbery_auto"], MapCrimeType["criminal_index"]]
-let selectBox_x = view(Inputs.select([MapCrimeType["criminal_index"]].concat(box), {label: "Tipo de crime X"}));
-let selectBox_y = view(Inputs.select([MapCrimeType["criminal_index"]].concat(box), {label: "Tipo de crime Y"}));
+let selectBox_x = view(Inputs.select([MapCrimeType["theft_cellphone"]].concat(box), {label: "Tipo de crime X"}));
+let selectBox_y = view(Inputs.select([MapCrimeType["robbery_cellphone"]].concat(box), {label: "Tipo de crime Y"}));
 ```
 
 </div>
@@ -369,7 +369,7 @@ const graph_scatter = {
             },
             "encoding": {
                 "x": { "value": 700 },
-                "y": { "value": 0 },
+                "y": { "value": divWidth*0.3 },
                 "text": { "value": `Correlação: ${coor.toFixed(2)}` }
             }
         }
