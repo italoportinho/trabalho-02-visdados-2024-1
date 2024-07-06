@@ -19,16 +19,16 @@ toc: false
         <li><span>neighborhood.csv</span></li>
     </ul>
     <p style="text-align: justify;">   
-    O dataset foi importado para um datawarehouse(Apache Hive) , de forma que pudessemos rodar consultas eficientemente em um ambiente distribuído para extrair um conjuto de informações relevantes para o propósito deste trabalho. O objetivo é extrair sub-datasets com os crimes por ano e distrito, com e sem sua geometria, e também rodar uma consulta para descobrir o ano com mais crimes e deste ano extrair um dataset com os crimes por dia e mês para poder fazer uma HeatMatrix. O dataset com os distrito sem geometria será usado para todas as visualizações que não envolvam mapas. Os crimes considerados no dataset são:
+    O dataset foi importado para um datawarehouse(Apache Hive) , de forma que pudessemos rodar consultas eficientemente em um ambiente distribuído para extrair um conjuto de informações relevantes para o propósito deste trabalho. O objetivo é extrair sub-datasets com os crimes por ano e distrito, com e sem sua geometria, e também rodar uma consulta para descobrir o ano com mais crimes e deste ano extrair um dataset com os crimes por dia e mês para poder fazer uma HeatMatrix. O dataset com os distrito sem geometria será usado para todas as visualizações que não envolvam mapas. Os crimes considerados no dataset e suas respectivas traduções são:
     <ul>
-        <li><span>feminicide</span></li>
-        <li><span>homicide</span></li>
-        <li><span>felony_murder</span></li>
-        <li><span>bodily_harm</span></li>
-        <li><span>theft_cellphone</span></li>
-        <li><span>robbery_cellphone</span></li>
-        <li><span>theft_auto</span></li>
-        <li><span>armed_robbery_auto</span></li>
+        <li><span>feminicide -> Feminicídio</span></li>
+        <li><span>homicide -> Homicídio</span></li>
+        <li><span>felony_murder -> Homicídio Qualificado</span></li>
+        <li><span>bodily_harm -> Lesão Corporal</span></li>
+        <li><span>theft_cellphone -> Furto de Celular</span></li>
+        <li><span>robbery_cellphone -> Roubo de Celular</span></li>
+        <li><span>theft_auto -> Furto de Carro</span></li>
+        <li><span>armed_robbery_auto -> Roubo Armado de Carro</span></li>
     </ul>
     </p>
     <p style="text-align: justify;">   

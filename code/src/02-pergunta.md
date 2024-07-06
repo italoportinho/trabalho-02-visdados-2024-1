@@ -29,12 +29,12 @@ title: Pergunta 2
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 <script src="https://cdn.jsdelivr.net/npm/simple-statistics@7.7.4/dist/simple-statistics.min.js"></script>
 
-<h1> 2) Como é a concentração de crimes para cada distrito em relação aos anos?</h1>
+<h1> 2) Como é a concentração e a relação dos crimes dos distrito da cidade de São Paulo?</h1>
 <hr>
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">
-    Para esta seção, iremos analisar a ocorrência de crimes nos distritos. Utilize o filtro abaixo para alterar o intervalo de anos dos dados, que atualizará automaticamente os gráficos e tabelas geradas. Além disso, dois filtros permitem que você selecione os tipos de crime que deseja analisar, possibilitando a construção de um gráfico de dispersão para estudar a correlação entre esses diferentes crimes. Iremos levar em consideração para a nossa análise nessa seção todos os anos, porém o usuário pode facilmente filtrar os anos que tiver interesse e tirar suas próprias conclusões.
+    Para esta seção, iremos analisar a ocorrência de crimes nos distritos. Utilize o filtro abaixo para alterar o intervalo de anos dos dados, que atualizará automaticamente os gráficos e tabela geradas. Além disso, dois filtros permitem que o usuário selecione os tipos de crime que deseja analisar, possibilitando a construção de um gráfico de dispersão para estudar a correlação entre esses diferentes crimes. Iremos levar em consideração para a nossa análise nessa seção todos os anos, porém o usuário pode facilmente filtrar os anos que tiver interesse e tirar suas próprias conclusões.
     </p>
 </div>
 <br>
@@ -54,6 +54,7 @@ function calculateCorrelation(x, y) {
     if (denominator === 0) return 0;
     return numerator / denominator;
 }
+
 ```
 
 
@@ -73,9 +74,30 @@ let yearSup = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano
 </div>
 
 ```js
-const box = ["feminicide", "homicide", "felony_murder", "bodily_harm", "theft_cellphone", "robbery_cellphone", "theft_auto", "armed_robbery_auto", "criminal_index"]
-let selectBox_x = view(Inputs.select(["criminal_index"].concat(box), {label: "Tipo de crime X"}));
-let selectBox_y = view(Inputs.select(["criminal_index"].concat(box), {label: "Tipo de crime Y"}));
+const MapCrimeType = {
+    "feminicide": "Feminicídio",
+    "homicide": "Homicídio",
+    "felony_murder": "Homicídio Qualificado",
+    "bodily_harm": "Lesão Corporal",
+    "theft_cellphone": "Furto de Celular",
+    "robbery_cellphone": "Roubo de Celular",
+    "theft_auto": "Furto de Carro",
+    "armed_robbery_auto": "Roubo Armado de Carro",
+    "criminal_index": "Índice Criminal"
+};
+function translateCrimeNames(data_array) {
+    return data_array.map(item => {
+        let translated_item = {};
+        for (let key in item) {
+            translated_item[MapCrimeType[key] || key] = item[key];
+        }
+        return translated_item;
+    });
+}
+
+const box = [MapCrimeType["feminicide"], MapCrimeType["homicide"], MapCrimeType["felony_murder"], MapCrimeType["bodily_harm"], MapCrimeType["theft_cellphone"], MapCrimeType["robbery_cellphone"], MapCrimeType["theft_auto"], MapCrimeType["armed_robbery_auto"], MapCrimeType["criminal_index"]]
+let selectBox_x = view(Inputs.select([MapCrimeType["criminal_index"]].concat(box), {label: "Tipo de crime X"}));
+let selectBox_y = view(Inputs.select([MapCrimeType["criminal_index"]].concat(box), {label: "Tipo de crime Y"}));
 ```
 
 </div>
@@ -83,7 +105,8 @@ let selectBox_y = view(Inputs.select(["criminal_index"].concat(box), {label: "Ti
 
 ```js
 let dataset_crimes_all_years = await FileAttachment("data/crimes_all_years_nogeom.csv").dsv({delimiter: ";", typed: true});
-let dataset = dataset_crimes_all_years.filter(element => element.year >= yearInf && element.year <= yearSup);
+let dataset = translateCrimeNames(dataset_crimes_all_years.filter(element => element.year >= yearInf && element.year <= yearSup));
+console.log(dataset)
 let dataset_x = dataset.map(element => element[selectBox_x]);
 let dataset_y = dataset.map(element => element[selectBox_y]);
 let data_scatter = dataset.map(element => ({
@@ -119,7 +142,7 @@ const maxCrimes = {};
 
 data_table.forEach(entry => {
   box.forEach(crime => {
-    if(crime !== "criminal_index"){
+    if(crime !== "Índice Criminal"){
         if (!maxCrimes[entry.name] || entry[crime] > maxCrimes[entry.name].Value) {
         maxCrimes[entry.name] = {
             "District": entry.name,
@@ -242,7 +265,7 @@ vegaEmbed('#vis0', graph_bar);
 
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">
-      Para representar o maior número de crimes já observado por tipo, utilizamos barras como marcadores para os tipos de crime e cores para indicar os distritos onde essas observações ocorreram. Ao levar o mouse para cima da barra, o usuário pode também observar o nome do distrito, o tipo de crime, a quantidade observada e o ano de ocorrência. Observamos que, ao considerar todo o intervalo de anos da nossa base de dados, o distrito República apresentou os maiores valores de roubo e furto de celulares. O distrito Jaguara destacou-se com os maiores valores de furto de carro e homicídio. Os maiores valores de roubo a mão armada foram registrados no distrito de Jabaquara. Outros tipos de crimes, como lesão corporal, homicídio qualificado e feminicídio, não apresentaram valores relevantes em nossa base de dados.
+      Para representar o maior número de crimes já observado por tipo, utilizamos barras como marcadores para os tipos de crime e cores para indicar os distritos onde essas observações ocorreram. Ao levar o mouse para cima da barra, o usuário pode também observar o nome do distrito, o tipo de crime, a quantidade observada e o ano de ocorrência. Observamos que, ao considerar todo o intervalo de anos da nossa base de dados, o distrito República apresentou os maiores valores de roubo e furto de celulares. O distrito Jaguara destacou-se com os maiores valores de furto de carro e homicídio. Os maiores valores de roubo armado de carro foram registrados no distrito de Jabaquara. Outros tipos de crimes, como lesão corporal, homicídio qualificado e feminicídio, não apresentaram valores relevantes em nossa base de dados.
     </p>
 </div>
 <br>
@@ -299,7 +322,7 @@ vegaEmbed('#vis1', graph_boxplot);
     </p>
     <br>
     <p style="text-align: justify;">
-      Em relação a todo o período dos dados, não tivemos valores significativos para construir boxplots de maneira satisfatória para lesão corporal, homicídio qualificado, feminicídio e homicídio. Para os demais tipos de crimes, observamos uma alta presença de outliers, destacando-se visualmente a maior ocorrência de outliers para o crime de furto de celulares.
+      Em relação a todo o período dos dados, não tivemos valores significativos para construir boxplots de maneira satisfatória para lesão corporal, homicídio qualificado, feminicídio e homicídio. Para os demais tipos de crimes, observamos uma alta presença de outliers, destacando-se visualmente a maior ocorrência de outliers para o crime de furto de celulares. Excluindo o índice criminal, que é a soma de todos os crimes, o crime que apresentou a maior mediana foi o de robo de celular
     </p>
 </div>
 <br>
@@ -367,7 +390,7 @@ vegaEmbed('#vis2', graph_scatter);
     </p>
     <br>
     <p style="text-align: justify;">
-      Este gráfico permite estudar a relação entre qualquer combinação de dois tipos de crimes. Por exemplo, ao analisar roubo e furto de celulares durante todo o período de anos, observamos uma correlação de 0.43. Embora seja fraca, isso pode indicar que esses dois tipos de crime possuem alguma relação direta, o que faz sentido, pois ambos envolvem celulares. Da mesma forma, podemos analisar furto e roubo a mão armada de veículos, que apresentam uma correlação de 0.35. Ao comparar roubo a mão armada de carro e roubo de celulares, encontramos uma correlação de 0.56, indicando uma relação mais significativa, possivelmente porque ambos estão relacionados ao roubo. Por outro lado, ao comparar furto de carro e furto de celulares, a correlação é de apenas 0.18, considerada baixa.
+      Este gráfico permite estudar a relação entre qualquer combinação de dois tipos de crimes. Por exemplo, ao analisar roubo e furto de celulares durante todo o período de anos, observamos uma correlação de 0.43. Embora seja fraca, isso pode indicar que esses dois tipos de crime possuem alguma relação direta, o que faz sentido, pois ambos envolvem celulares. Da mesma forma, podemos analisar furto e roubo armado de carros, que apresentam uma correlação de 0.35. Ao comparar roubo a mão armada de carro e roubo de celulares, encontramos uma correlação de 0.56, indicando uma relação mais significativa, possivelmente porque ambos estão relacionados ao roubo. Por outro lado, ao comparar furto de carro e furto de celulares, a correlação é de apenas 0.18, considerada baixa.
     </p>
 </div>
 <br>

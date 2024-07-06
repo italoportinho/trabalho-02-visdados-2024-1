@@ -57,14 +57,14 @@ toc: false
 <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
 <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
 
-<h1> Como é a distribuição de crimes por tipo, região e ano na capital de São Paulo?</h1>
+<h1>3) Como é a distribuição detalhada dos crimes para cada distrito na cidade de São Paulo?</h1>
 <hr>
 
 ```js
 
 const year = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano"}));
-const crimeTypeOptions = ["Roubo Armado de Carro", "Lesão Corporal", "Total de Crimes", "Homicídio Qualificado","Feminicídio","Homicídio","Roubo de Celular","Furto de Carro","Furto de Celular"];
-const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "Total de Crimes", label: "Tipo de crime: "}));
+const crimeTypeOptions = ["Roubo Armado de Carro", "Lesão Corporal", "Índice Criminal", "Homicídio Qualificado","Feminicídio","Homicídio","Roubo de Celular","Furto de Carro","Furto de Celular"];
+const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "Índice Criminal", label: "Tipo de crime: "}));
 
 const MapCrimeType = {
     "Feminicídio": "feminicide",
@@ -75,7 +75,7 @@ const MapCrimeType = {
     "Roubo de Celular": "robbery_cellphone",
     "Furto de Carro": "theft_auto",
     "Roubo Armado de Carro": "armed_robbery_auto",
-    "Total de Crimes": "criminal_index"
+    "Índice Criminal": "criminal_index"
 };
 ```
 
@@ -139,7 +139,7 @@ function transformData(name_values) {
     { "crime": "Roubo de Celular", "value": name_values.robbery_cellphone },
     { "crime": "Furto de Carro", "value": name_values.theft_auto },
     { "crime": "Roubo armado de Carro", "value": name_values.armed_robbery_auto },
-    { "crime": "Total de Crimes", "value": name_values.criminal_index },
+    { "crime": "Índice Criminal", "value": name_values.criminal_index },
     // { "crime": "crime_total", "value": name_values.crime_total }
   ];
 }
@@ -393,13 +393,7 @@ map.on('mousemove', 'layer_crimes', function (e) {
 <br>
 <div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
     <p style="text-align: justify;">
-      Ao considerar o filtro "Total de Crimes", que representa a soma de todos os tipos de crime, observamos que o bairro de Jaguara apresentou os maiores valores nos anos de 2011 a 2013. Em 2014, os bairros de Santo Amaro, Cidade Ademar, Jabaquara, Cidade Dutra e República destacaram-se com os maiores índices. Em 2015, houve um aumento significativo no número de crimes no bairro da República, uma tendência que se manteve nos anos de 2016, 2017 e 2018, se comparado aos demais. Diante dessa informação, seria interessante investigar os possíveis fatores que contribuíram para o aumento expressivo da criminalidade nesse bairro.
-    </p>
-</div>
-<br>
-<div style="background-color: #f2f2f2; border-left: 6px solid royalblue; padding: 10px;">
-    <p style="text-align: justify;">
-      Em relação aos tipos de crimes, observamos que, ao longo de todos os anos analisados, os mais comuns foram roubo armado de carros, roubo de celulares, furto de carros e furto de celulares. Em contrapartida, os crimes de lesão corporal, homicídio qualificado, feminicídio e homicídio apresentaram uma incidência proporcionalmente menor quando comparados aos demais.
+      Ao considerar o filtro "Índice Criminal", que representa a soma de todos os tipos de crime, observamos que o bairro de Jaguara apresentou os maiores valores nos anos de 2011 a 2013. Em 2014, os bairros de Santo Amaro, Cidade Ademar, Jabaquara, Cidade Dutra e República destacaram-se com os maiores índices. Em 2015, houve um aumento significativo no número de crimes no bairro da República, uma tendência que se manteve nos anos de 2016, 2017 e 2018, se comparado aos demais. Diante dessa informação, seria interessante investigar os possíveis fatores que contribuíram para o aumento expressivo da criminalidade nesse bairro. Em relação aos tipos de crimes, observamos que, ao longo de todos os anos analisados, os mais comuns foram roubo armado de carros, roubo de celulares, furto de carros e furto de celulares. Em contrapartida, os crimes de lesão corporal, homicídio qualificado, feminicídio e homicídio apresentaram uma incidência proporcionalmente menor quando comparados aos demais.
     </p>
 </div>
 
