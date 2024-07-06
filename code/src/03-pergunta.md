@@ -62,7 +62,7 @@ toc: false
 
 ```js
 
-const year = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano"}));
+const year = view(Inputs.range([2011, 2018], {value: 2017, step: 1, label: "Ano"}));
 const crimeTypeOptions = ["Roubo Armado de Carro", "Lesão Corporal", "Índice Criminal", "Homicídio Qualificado","Feminicídio","Homicídio","Roubo de Celular","Furto de Carro","Furto de Celular"];
 const crimeType = view(Inputs.radio(crimeTypeOptions, {value: "Índice Criminal", label: "Tipo de crime: "}));
 

@@ -64,11 +64,11 @@ function calculateCorrelation(x, y) {
 <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom:10px; margin-top:30px;">
 
 ```js
-let yearInf = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano Inferior"}));
+let yearInf = view(Inputs.range([2011, 2018], {value: 2014, step: 1, label: "Ano Inferior"}));
 ```
 
 ```js
-let yearSup = view(Inputs.range([2011, 2018], {value: 2011, step: 1, label: "Ano Superior"}));
+let yearSup = view(Inputs.range([2011, 2018], {value: 2017, step: 1, label: "Ano Superior"}));
 ```
 
 </div>
