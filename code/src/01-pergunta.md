@@ -69,7 +69,7 @@ embed("#chart_dataset_bpm",graph_line_BPM.spec);
   </div>
 </div>
 
-## Crime que mais influencia no índice criminal(média)
+## Influencia dos crimes no índice criminal
 <div class="grid grid-cols-1">
   <div class="card" id="multiline_chart_2">         
       ${ vl.render(multiline_chart_2(multiline_chart_2_data)) }
