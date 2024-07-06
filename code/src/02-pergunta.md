@@ -334,7 +334,7 @@ vegaEmbed('#vis1', graph_boxplot);
 const graph_scatter = {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
     "description": "",
-    "width": "container",
+    "width": divWidth*0.9,
     "height": 500,
     "data": { "values": data_scatter },
     "layer": [
@@ -368,8 +368,8 @@ const graph_scatter = {
                 "fontSize": 16
             },
             "encoding": {
-                "x": { "value": 700 },
-                "y": { "value": divWidth*0.3 },
+                "x": { "value": 0},
+                "y": { "value": 0 },
                 "text": { "value": `Correlação: ${coor.toFixed(2)}` }
             }
         }
